@@ -1,7 +1,7 @@
 {
   "name": "simple-data-pipe",
-  "version": "0.2.0",
-  "description": "Tool for moving data to the cloud: e.g. Salesforce to Cloud",
+  "version": "0.2.1",
+  "description": "Tool for loading cloud data (e.g. from salesforce) into Cloudant.",
   "main": "server.js",
   "scripts": {
     "test": "NODE_CONFIG=tests/config/configYP ./node_modules/.bin/mocha ./tests",
@@ -12,10 +12,8 @@
     "url": "https://github.com/ibm-cds-labs/simple-data-pipe"
   },
   "keywords": [
-    "dataworks",
     "Salesforce",
     "stripe",
-    "dashDb",
     "Cloudant",
     "Data Movement"
   ],
