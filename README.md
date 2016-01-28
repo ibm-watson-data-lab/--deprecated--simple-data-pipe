@@ -1,13 +1,11 @@
+# Simple Data Pipe 
 
+The Simple Data Pipe is an app that loads data from cloud data sources into Cloudant, IBM's managed NOSQL database. Out of the box you can load data from salesforce.com and stripe.com. Additional connectors are available for other data sources.
 
-# Simple Data Pipe (aka "Pipes")
-
-The Simple Data Pipe is an app that moves your Salesforce or stripe.com data to dashDB, which is the IBM cloud data warehouse. Once you have your data in dashDB, you can do all kinds of analysis on it, with all kinds of tools, such as SQL, R, and Looker.
-
-![Bluemix Deployments](https://deployment-tracker.mybluemix.net/stats/8c0fa6ec632fc1715cefebeaf0913740/badge.svg)
+![Bluemix Deployments](https://deployment-tracker.mybluemix.net/stats/eff5ff771f3cfd9e9443463c383565a1/badge.svg)
 
 ## Usage
-To use the Simple Data Pipe, developers first grab the code on Github, and then deploy it to IBM Bluemix, where it runs. It lives at a URL in Bluemix, and comes complete with an AngularJS UI for connecting, scheduling, and reporting. We use the Salesforce OAuth to connect, and the powerful IBM DataWorks APIs to move the data.
+To use the Simple Data Pipe, developers first grab the code on Github, and then deploy it to IBM Bluemix, where it runs. It lives at a URL in Bluemix, and comes complete with an AngularJS UI for connecting, scheduling, and reporting. 
 
 To follow our full tutorial please visit : https://developer.ibm.com/clouddataservices/simple-data-pipe/
 
@@ -15,7 +13,7 @@ To follow our full tutorial please visit : https://developer.ibm.com/clouddatase
 
 The fastest way to deploy this application to Bluemix is to click the **Deploy to Bluemix** button below. If you prefer instead to deploy manually to Bluemix then read the entirety of this section.
 
-[![Deploy to Bluemix](https://deployment-tracker.mybluemix.net/stats/8c0fa6ec632fc1715cefebeaf0913740/button.svg)](https://bluemix.net/deploy?repository=https://github.com/ibm-cds-labs/pipes)
+[![Deploy to Bluemix](https://deployment-tracker.mybluemix.net/stats/eff5ff771f3cfd9e9443463c383565a1/button.svg)](https://bluemix.net/deploy?repository=https://github.com/ibm-cds-labs/simple-data-pipe)
 
 **Don't have a Bluemix account?** If you haven't already, you'll be prompted to [sign up](http://www.ibm.com/cloud-computing/bluemix/) for a Bluemix account when you click the button.  Sign up, verify your email address, then return here and click the the **Deploy to Bluemix** button again. Your new credentials let you deploy to the platform and also to code online with Bluemix and Git. If you have questions about working in Bluemix, find answers in the [Bluemix Docs](https://www.ng.bluemix.net/docs/).
 
@@ -31,15 +29,7 @@ Complete these steps first if you have not already:
 
 Create a Cloudant service within Bluemix if one has not already been created:
 
-    $ cf create-service cloudantNoSQLDB Shared pipes-cloudant-service
-
-Create a dashDB service within Bluemix if one has not already been created:
-
-    $ cf create-service dashDB Entry pipes-dashdb-service
-
-Create a DataWorks service within Bluemix if one has not already been created:
-
-    $ cf create-service DataWorks_Gen3 Starter pipes-dataworks-service
+    $ cf create-service cloudantNoSQLDB Shared sdp-cloudant-service
 
 Create a Single Sign On (SSO) service within Bluemix if one has not already been created:
 
@@ -47,8 +37,10 @@ Create a Single Sign On (SSO) service within Bluemix if one has not already been
 
 ### Deploying
 
-To deploy to Bluemix, simply:
+To deploy manually to Bluemix, simply:
 
+    $ git clone https://github.com/ibm-cds-labs/simple-data-pipe.git
+    $ cd simple-data-pipe
     $ cf push
 
 **Note:** You may notice that Bluemix assigns a URL to your application containing a random word. This is defined in the `manifest.yml` file where the `random-route` key set to the value of `true`. This ensures that multiple people deploying this application to Bluemix do not run into naming collisions. To specify your own route, remove the `random-route` line from the `manifest.yml` file and add a `host` key with the unique value you would like to use for the host name.

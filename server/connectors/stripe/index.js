@@ -14,6 +14,7 @@
 // limitations under the License.
 //-------------------------------------------------------------------------------
 
+ 'use strict';
 /**
  * CDS Labs module
  * 
@@ -47,9 +48,9 @@ function stripe( parentDirPath ){
 	    new (require('./copyFromStripeToCloudantStep.js'))(),
 	    // run dataworks activities that copy data from the staging
         // databases to dashDB   			
-	    new pipesSDK.cloudantToDashActivitiesStep(),
+	    // new pipesSDK.cloudantToDashActivitiesStep(),
 	    // monitor dataworks activities until completion
-	    new pipesSDK.activitiesMonitoringStep()               
+	    // new pipesSDK.activitiesMonitoringStep()               
     ]);
 	
 	/**
