@@ -1,0 +1,27 @@
+---
+declared-services:
+  pipes-cloudant-service:
+    label: cloudantNoSQLDB
+    plan: Shared
+  pipes-dashdb-service:
+    label: dashDB
+    plan: Entry
+  pipes-dataworks-service:
+    label: DataWorks_Gen3
+    plan: Starter
+  pipes-sso-service:
+    label: SingleSignOn
+    plan: standard
+applications:
+- name: simple-data-pipe
+  memory: 512M
+  instances: 1
+  domain: mybluemix.net
+  random-route: true
+  disk_quota: 1024M
+  command: node --expose-gc server.js
+  path: .
+  services:
+  - pipes-cloudant-service
+  - pipes-dashdb-service
+  - pipes-dataworks-service

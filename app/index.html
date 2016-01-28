@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en" ng-app="dataMovingApp">
+<head profile="http://www.w3.org/2005/10/profile">
+  <meta charset="utf-8">
+  <title>IBM Cloud Data Services | Simple Data Pipe</title>
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/angular-resource/angular-resource.js"></script>
+  <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+  <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+  <script src="bower_components/lodash/dist/lodash.compat.js"></script>
+  <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/bootstrap.icon-large.min.css">
+  <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css" type="text/css"/>
+
+  <link rel="stylesheet" href="css/main.css" type="text/css" />
+
+  <link rel="icon" type="image/png" href="img/favicon.png" />
+  <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico" />
+
+  <script src="bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+  <script src="bower_components/lodash/dist/lodash.min.js"></script>
+  <script src="bower_components/moment/min/moment.min.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/pipes.js"></script>
+</head>
+<body>
+<!-- start header -->
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+	    <div class="container-fluid">
+	    	<div class="row">
+		        <div class="navbar-header col-sm-6">
+		            <span class="navbar-brand">
+		                <a rel="home" href="https://developer.ibm.com/clouddataservices">
+		                    <span>Cloud Data Services</span>
+		                </a>
+		            </span>
+		        </div>
+				<div class="navbar-header col-sm-6">
+		        	<span class="pull-right" style="margin-top:17px;color:white" ng-if="userid">
+		            	Welcome {{userid}}
+			         </span>
+		        </div>
+	        </div>
+	    </div>
+	</nav>
+<!-- end header -->
+
+<!-- start content -->
+	<div class="page-content container-fluid">
+		<div class="row">
+
+<!-- start sidebar -->
+			<div class="col-sm-3 sidebar" ui-view="pipeSidebar">
+				Loading. Please Wait...
+			</div>
+<!-- end sidebar -->
+
+<!-- start main -->
+			<div class="col-sm-9 col-sm-offset-3 main" ui-view="pipeDetails">
+				Loading. Please Wait...
+			</div>
+<!-- end main -->
+
+		</div>
+	</div>
+<!-- end content -->
+
+<!-- startfooter
+
+  WE DON'T NEED THE IBM FOOTER ON OUR SAMPLE APPS
+
+
+	<div id="pnext-footer" class="pn-footer links-footer" class="mtxl" role="navigation" aria-label="Page footer">
+		<div class="pn-pcon">
+			<div class="pn-columns">
+				<div class="pn-col-6-1">
+					<a class="pn-footer-social-link" href="https://developer.ibm.com/clouddataservices/feed/">
+						<i class="sprite rss-footer"></i><span class="visuallyhidden">RSS Feed</span>
+					</a>
+				</div>
+				<div class="pn-col-6-4">
+					<div class="pn-footer-menu" role="contentinfo">
+						<ul id="menu-footer" class="pn-footer-menu pn-il pn-il--center"><li class='pn-footer-menu-item pn-il-item'><a href='https://www.ibm.com/developerworks/secure/reportabuse?referingURL=https%3A%2F%2Fdeveloper.ibm.com%2Fclouddataservices%2Fblog'>Report Abuse</a></li><li class='pn-footer-menu-item pn-il-item'><a href='/terms-of-use/'>Terms of Use</a></li><li class='pn-footer-menu-item pn-il-item'><a href='/third-party-notice/'>Third Party Notice</a></li><li class='pn-footer-menu-item pn-il-item'><a href='http://www.ibm.com/privacy/'>IBM Privacy</a></li></ul>
+					</div>
+				</div>
+				<div class="pn-col-6-1">
+					<span class="fr">
+						<a href="http://ibm.com"><i class="sprite ibm-smlogo"></i><span class="visuallyhidden">IBM</span></a>
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+end footer -->
+
+<div class="modal fade" id="createNewPipe" tabindex="-1" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div ui-view="pipeCreateDialog"></div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="deletePipe" tabindex="-1" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div ui-view="pipeDeleteDialog"></div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
