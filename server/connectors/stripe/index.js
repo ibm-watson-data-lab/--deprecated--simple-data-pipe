@@ -29,6 +29,7 @@ var pipesDb = pipesSDK.pipesDb;
 var qs = require('querystring');
 var request = require('request');
 var stripeConUtil = require('./stripeConUtil.js');
+var bluemixHelperConfig = require('bluemix-helper-config');
 
 /**
  * Stripe.com connector implements server/connectors/connector.js
@@ -36,22 +37,28 @@ var stripeConUtil = require('./stripeConUtil.js');
  */
 function stripe( parentDirPath ){
 	//Call constructor from super class
-	connector.call(this);
+	connector.call(this,{copyToDashDb:true});
 	
 	// Define the identifying connector properties
 	this.setId(stripeConUtil.getMetaInfo().id);
 	this.setLabel(stripeConUtil.getMetaInfo().label);
-	
+
 	// Define the pipe processing steps
-	this.setSteps([      
-		// copy data from stripe to cloudant staging databases
-	    new (require('./copyFromStripeToCloudantStep.js'))(),
-	    // run dataworks activities that copy data from the staging
-        // databases to dashDB   			
-	    // new pipesSDK.cloudantToDashActivitiesStep(),
-	    // monitor dataworks activities until completion
-	    // new pipesSDK.activitiesMonitoringStep()               
-    ]);
+	var steps = [];
+	// copy data from stripe.com to Cloudant
+	steps.push(new (require('./copyFromStripeToCloudantStep.js'))());
+
+	if(bluemixHelperConfig.vcapServices.getService( "dashdb" ) && (bluemixHelperConfig.vcapServices.getService( "dataworks" ))) {
+			// the prerequiste services for data movement to dashDB are bound to this application
+			if(this.getOption('copyToDashDb')) {
+				// data movement to dashDB was requested
+				steps.push(new pipesSDK.cloudantToDashActivitiesStep());				
+	    		// monitor dataworks activities until completion	
+	    		steps.push(new pipesSDK.activitiesMonitoringStep());
+			}
+	}
+
+	this.setSteps(steps);
 	
 	/**
 	 * This function is invoked after the user has provided an OAuth consumer key and consumer secret.

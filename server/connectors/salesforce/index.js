@@ -21,7 +21,7 @@ var _ = require('lodash');
  */
 function sfConnector( parentDirPath ){
 	//Call constructor from super class
-	connectorExt.call(this, "SalesForce", "SalesForce", {copyToDashDb: false});
+	connectorExt.call(this, "SalesForce", "SalesForce");
 	
 	this.doConnectStep = function( done, pipeRunStep, pipeRunStats, logger, pipe, pipeRunner ){
 		var sfConnection = pipeRunner.sf;
