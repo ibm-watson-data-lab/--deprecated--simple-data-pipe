@@ -8,7 +8,7 @@
 var jsforce = require('jsforce');
 var _ = require('lodash');
 var async = require('async');
-var pipesSDK = require('pipes-sdk');
+var pipesSDK = require('simple-data-pipe-sdk');
 var pipesDb = pipesSDK.pipesDb;
 var global = require("bluemix-helper-config").global;
 

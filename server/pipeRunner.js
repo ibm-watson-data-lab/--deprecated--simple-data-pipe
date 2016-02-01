@@ -5,7 +5,7 @@
 *	@Author: David Taieb
 */
 
-var pipesSDK = require('pipes-sdk');
+var pipesSDK = require('simple-data-pipe-sdk');
 var cloudant = pipesSDK.cloudant;
 var _ = require("lodash");
 var async = require("async");

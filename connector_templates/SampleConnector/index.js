@@ -37,18 +37,15 @@ function sample( parentDirPath ){
 
 	// TODO: Assign a display label to this connector. 
 	this.setLabel('Sample data source');
-	
-	//Set the steps
-	this.setSteps([    
-		// TODO customize sampleDataCopyStep.js as needed to copy data from your data source to the Cloudant data staging area.
-	    new (require('./sampleDataCopyStep.js'))(),	
-	    // TODO: add additional processing steps, if needed by adding 		
-	    // new (require('path/to/additional_js_file.js'))(),
-	    // Do not remove these steps. They copy data from the staging area to dashDB
-	    new (require('../../run/cloudantToDashActivitiesStep'))(),  
-	    new (require('../../run/activitiesMonitoringStep'))()               
-    ]);
-	
+		
+	// Define the pipe processing steps
+	var steps = [];
+	// copy data from stripe.com to Cloudant
+	steps.push(new (require('./sampleDataCopyStep.js'))());
+	// TODO: add additional processing steps, if needed 
+
+	this.setSteps(steps);
+
 	/**
 	 * authCallback: callback for OAuth authentication protocol
 	 * Collects OAuth information from the OAuth server and retrieves list of available 'tables' (stripe objects) that can be moved by the pipe
@@ -180,9 +177,6 @@ function sample( parentDirPath ){
 
 			// TODO: call OAuth Provider and request an OAuth token, which we'll need to fetch data from the data source  
 			// res.redirect();
-
-			console.log('**** REQ: ' + req);
-			console.log('************************************'); 
 
 
 		}); // pipeDb.getPipe

@@ -1,6 +1,6 @@
 {
   "name": "simple-data-pipe",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Tool for loading cloud data (e.g. from salesforce) into Cloudant.",
   "main": "server.js",
   "scripts": {
@@ -43,11 +43,10 @@
     "nconfig": "*",
     "node-schedule": "~0.2.9",
     "node-static": "^0.7.7",
-    "nodejs-dataworks": "*",
     "npm": "^3.5.0",
     "oauth": "0.9.10",
     "passport": "~0.2.2",
-    "pipes-sdk": "^0.1.0",
+    "simple-data-pipe-sdk": "git://github.com/ibm-cds-labs/simple-data-pipe-sdk.git#sdp-ng",
     "request": "~2.58.0",
     "stripe": "^3.7.0",
     "when": "~3.7.3",

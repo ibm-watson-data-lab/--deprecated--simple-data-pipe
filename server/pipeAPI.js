@@ -5,7 +5,7 @@
 *	@Author: David Taieb
 */
 
-var pipesSDK = require('pipes-sdk');
+var pipesSDK = require('simple-data-pipe-sdk');
 var pipesDb = pipesSDK.pipesDb;
 var global = require('bluemix-helper-config').global;
 var webSocket = require('ws');

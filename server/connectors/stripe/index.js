@@ -23,7 +23,7 @@
  * 
  */
 
-var pipesSDK = require('pipes-sdk');
+var pipesSDK = require('simple-data-pipe-sdk');
 var connector = pipesSDK.connector;
 var pipesDb = pipesSDK.pipesDb;
 var qs = require('querystring');
@@ -37,7 +37,7 @@ var bluemixHelperConfig = require('bluemix-helper-config');
  */
 function stripe( parentDirPath ){
 	//Call constructor from super class
-	connector.call(this,{copyToDashDb:true});
+	connector.call(this);
 	
 	// Define the identifying connector properties
 	this.setId(stripeConUtil.getMetaInfo().id);
@@ -47,16 +47,6 @@ function stripe( parentDirPath ){
 	var steps = [];
 	// copy data from stripe.com to Cloudant
 	steps.push(new (require('./copyFromStripeToCloudantStep.js'))());
-
-	if(bluemixHelperConfig.vcapServices.getService( "dashdb" ) && (bluemixHelperConfig.vcapServices.getService( "dataworks" ))) {
-			// the prerequiste services for data movement to dashDB are bound to this application
-			if(this.getOption('copyToDashDb')) {
-				// data movement to dashDB was requested
-				steps.push(new pipesSDK.cloudantToDashActivitiesStep());				
-	    		// monitor dataworks activities until completion	
-	    		steps.push(new pipesSDK.activitiesMonitoringStep());
-			}
-	}
 
 	this.setSteps(steps);
 	

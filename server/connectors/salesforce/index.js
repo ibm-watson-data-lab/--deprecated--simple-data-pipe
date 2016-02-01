@@ -8,7 +8,7 @@
  * @author David Taieb
  */
 
-var pipesSDK = require('pipes-sdk');
+var pipesSDK = require('simple-data-pipe-sdk');
 var connectorExt = pipesSDK.connectorExt;
 var pipesDb = pipesSDK.pipesDb;
 var jsforce = require("jsforce");

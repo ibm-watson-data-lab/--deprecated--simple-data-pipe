@@ -48,7 +48,7 @@ function run(logger, tableName, pipe, pipeRunStats, storageHandle, stripe, callb
 	};
 
 	if(!storageHandle) {
-		stats.errors.push({message : 'The staging database is unavailable. No data was copied to dashDB.'});
+		stats.errors.push({message : 'The staging database is unavailable. No data was copied to Cloudant.'});
 		pipeRunStats.addTableStats(stats);
 		return callback(null, stats);	// nothing to do. the staging database is not available
 	}
