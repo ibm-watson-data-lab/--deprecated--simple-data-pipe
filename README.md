@@ -1,6 +1,6 @@
 # Simple Data Pipe 
 
-The Simple Data Pipe is an app that loads data from cloud data sources into Cloudant, IBM's managed NOSQL database. Out of the box you can load data from salesforce.com and stripe.com. Additional connectors are available for other data sources.
+The Simple Data Pipe is an app that loads data from cloud data sources into Cloudant, IBM's managed NoSQL database. Out of the box you can load data from salesforce.com and stripe.com. You can load data from other cloud data sources, such as Reddit using [custom connectors] (https://developer.ibm.com/clouddataservices/?page_id=5072&preview=true).
 
 ![Bluemix Deployments](https://deployment-tracker.mybluemix.net/stats/eff5ff771f3cfd9e9443463c383565a1/badge.svg)
 
@@ -68,7 +68,7 @@ Once that line is removed, you may also uninstall the `cf-deployment-tracker-cli
 
 #### License 
 
-Copyright [2015] [IBM Cloud Data Services]
+Copyright [2015-2016] [IBM Cloud Data Services]
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
