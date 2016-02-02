@@ -7,7 +7,7 @@
 
 var fs = require('fs');
 var global = require('bluemix-helper-config').global;
-var pipesSDK = require('pipes-sdk');
+var pipesSDK = require('simple-data-pipe-sdk');
 var connector = pipesSDK.connector;
 var _ = require('lodash');
 var path = require("path");

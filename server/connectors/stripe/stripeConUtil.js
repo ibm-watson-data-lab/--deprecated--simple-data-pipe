@@ -16,7 +16,7 @@
 
 'use strict';
 
-var pipesSDK = require('pipes-sdk');
+var pipesSDK = require('simple-data-pipe-sdk');
 var cloudant = pipesSDK.cloudant;
 var global = require('bluemix-helper-config').global;
 var _ = require('lodash');

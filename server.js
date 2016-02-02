@@ -32,12 +32,6 @@ app.use( function( req, res, next ){
 	return next();
 });
 
-if ( process.env.START_PROXY ){
-	//Development only, creates a proxy server to enable local environment access to dw servers
-	var dataworks = require("nodejs-dataworks").dataload;
-	var dwInstance = new dataworks();
-}
-
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

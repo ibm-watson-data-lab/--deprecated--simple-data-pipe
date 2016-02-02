@@ -16,7 +16,7 @@
 
 'use strict';
 
-var pipesSDK = require('pipes-sdk');
+var pipesSDK = require('simple-data-pipe-sdk');
 var pipeRunStep = pipesSDK.pipeRunStep;
 var Stripe = require('stripe');
 var stripeConUtil = require('./stripeConUtil.js'); 

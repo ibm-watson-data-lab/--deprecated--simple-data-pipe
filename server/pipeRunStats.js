@@ -6,7 +6,7 @@
 */
 
 var moment = require("moment");
-var pipesSDK = require('pipes-sdk');
+var pipesSDK = require('simple-data-pipe-sdk');
 var pipesDb = pipesSDK.pipesDb;
 var _ = require("lodash");
 var global = require("bluemix-helper-config").global;
