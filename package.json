@@ -34,7 +34,6 @@
     "errorhandler": "~1.3.6",
     "express": "^4.10.6",
     "express-session": "1.11.3",
-    "jsforce": "1.4.1",
     "jsonfile": "^2.2.1",
     "jws": "0.2.5",
     "lodash": "~3.9.3",
@@ -48,6 +47,7 @@
     "passport": "~0.2.2",
     "simple-data-pipe-sdk": "git://github.com/ibm-cds-labs/simple-data-pipe-sdk.git",
     "simple-data-pipe-connector-stripe": "git://github.com/ibm-cds-labs/simple-data-pipe-connector-stripe.git",
+    "simple-data-pipe-connector-salesforce": "git://github.com/ibm-cds-labs/simple-data-pipe-connector-salesforce.git",
     "request": "~2.58.0",
     "when": "~3.7.3",
     "ws": "~0.7.2"
