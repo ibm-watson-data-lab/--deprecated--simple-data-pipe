@@ -15,7 +15,7 @@ var pipesDb = pipesSDK.pipesDb;
 
 function connectorAPI(){
 	
-	var connectors = null;
+	var connectors = [];
 	
 	/**
 	 * loadConnector: private API for loading a connector from a specified path
