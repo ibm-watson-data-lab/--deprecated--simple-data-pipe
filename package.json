@@ -47,7 +47,7 @@
     "passport": "~0.2.2",
     "simple-data-pipe-sdk": "git://github.com/ibm-cds-labs/simple-data-pipe-sdk.git",
     "simple-data-pipe-connector-stripe": "git://github.com/ibm-cds-labs/simple-data-pipe-connector-stripe.git",
-    "simple-data-pipe-connector-salesforce": "git://github.com/ibm-cds-labs/simple-data-pipe-connector-salesforce.git#sdp-ng",
+    "simple-data-pipe-connector-salesforce": "git://github.com/ibm-cds-labs/simple-data-pipe-connector-salesforce.git",
     "request": "~2.58.0",
     "when": "~3.7.3",
     "ws": "~0.7.2"
