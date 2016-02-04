@@ -61,29 +61,30 @@ function connectorAPI(){
 	//load connectors with source installed within the main app
 	var connectorPath = path.join( __dirname, "connectors" );
 	fs.readdir( connectorPath, function(err, files){
-		if ( err ){
-			throw new Error( err );
+
+		if (! err ){
+			console.log('Embedded connector repository is present. Searching for connectors.');
+			// Load pre-packaged connectors
+			connectors = _.chain( files )
+				.filter( function(file) {
+											return fs.lstatSync(path.join(connectorPath, file)).isDirectory();
+						})
+				.map( function( file ){
+										//Load the connector
+										var connector = loadConnector( path.join(connectorPath, file) );
+										if ( connector ){
+											console.log("Loaded built-in connector", connector.getId());
+										}
+										return connector;
+						})
+				.filter( function( connector ){
+										//One more pass to remove any invalid connector
+										return connector != null;
+						})
+				.value();
 		}
 
-		connectors = _.chain( files )
-		.filter( function(file){
-			return fs.lstatSync(path.join(connectorPath, file)).isDirectory();
-		})
-		.map( function( file ){
-			//Load the connector
-			var connector = loadConnector( path.join(connectorPath, file) );
-			if ( connector ){
-				console.log("Loaded built-in connector", connector.getId());
-			}
-			return connector;
-		})
-		.filter( function( connector ){
-			//One more pass to remove any invalid connector
-			return connector != null;
-		})
-		.value();
-		
-		//Load connectors installed as node modules
+		//Load connectors installed as dependent node modules
 		var npm = require("npm");
 		npm.load({ parseable: true, depth:0 }, function (err, npm) {
 			if (err) {
