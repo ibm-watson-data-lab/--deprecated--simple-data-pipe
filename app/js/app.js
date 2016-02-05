@@ -581,3 +581,9 @@ var mainApp = angular.module('dataMovingApp', [
     $scope.fetchRuns(false);
   }]
 )
+
+.filter('sortBy', function() {
+  return function(items, field) {
+	  return _.sortBy(items, [field]);
+  };
+})
