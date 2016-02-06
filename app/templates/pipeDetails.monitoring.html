@@ -72,7 +72,7 @@
 				<th>Status</th>
 			</thead>
 			<tbody>
-				<tr ng-repeat="stat in activeRun.tableStats | orderBy:'tableName'">
+				<tr ng-repeat="stat in activeRun.tableStats | sortBy:'tableName'">
 					<td>{{stat.tableName}}</td>
 					<td><span class="piperecord">{{stat.numRecords | number}}</span></td>
 					<td>{{stat.errors[0].message}}</td>

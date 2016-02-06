@@ -45,7 +45,7 @@
     "npm": "^3.5.0",
     "oauth": "0.9.10",
     "passport": "~0.2.2",
-    "simple-data-pipe-sdk": "git://github.com/ibm-cds-labs/simple-data-pipe-sdk.git",
+    "simple-data-pipe-sdk": "^0.2.0",
     "simple-data-pipe-connector-stripe": "git://github.com/ibm-cds-labs/simple-data-pipe-connector-stripe.git",
     "simple-data-pipe-connector-salesforce": "git://github.com/ibm-cds-labs/simple-data-pipe-connector-salesforce.git",
     "request": "~2.58.0",

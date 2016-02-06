@@ -207,6 +207,7 @@ var mainApp = angular.module('dataMovingApp', [
 	  if (newPipe) {
 			//Mark it as new so it passes validation
 			newPipe['new'] = true;
+			newPipe.name = newPipe.name.toLowerCase();
 		    pipesService.createPipe( newPipe ).then(
 		      function(response){
 		        console.log("Pipe " + response._id + " successfully saved");
@@ -229,14 +230,25 @@ var mainApp = angular.module('dataMovingApp', [
   
   $rootScope.createNewPipeNameSet = function() {
 	  var name = newPipeForm.name.value;
-	  if (_.find($scope.pipes, function(pipe) {
-		  return pipe.name == name;
-	  })) {
-		  $scope.newPipeForm.name.$setValidity("exists", false);
+	  //match cloudant naming requirements
+	  var patt = new RegExp(/^[a-zA-Z][a-zA-Z0-9_$()+\-/]*$/);
+	  
+	  if (patt.test(name)) {
+		  $scope.newPipeForm.name.$setValidity("invalid", true);
+		  if (_.find($scope.pipes, function(pipe) {
+			  return pipe.name == name;
+		  })) {
+			  $scope.newPipeForm.name.$setValidity("exists", false);
+		  }
+		  else {
+			  $scope.newPipeForm.name.$setValidity("exists", true);
+		  }
 	  }
 	  else {
 		  $scope.newPipeForm.name.$setValidity("exists", true);
+		  $scope.newPipeForm.name.$setValidity("invalid", false);
 	  }
+	  
   }
 
   $rootScope.collapsePipeNavMenu = function(pipeId) {
@@ -581,3 +593,9 @@ var mainApp = angular.module('dataMovingApp', [
     $scope.fetchRuns(false);
   }]
 )
+
+.filter('sortBy', function() {
+  return function(items, field) {
+	  return _.sortBy(items, [field]);
+  };
+})
