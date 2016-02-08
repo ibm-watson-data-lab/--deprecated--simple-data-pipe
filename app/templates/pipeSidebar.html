@@ -6,18 +6,15 @@
 		<li ui-sref-active="active" ng-class="{'active':!selectedPage || selectedPage === 'about'}">
 			<a ng-click="collapsePipeNavMenu(); selectedPage = 'about'" ui-sref="about">About</a>
 		</li>
-		<li>
-			<a href="javascript:;" data-toggle="modal" data-target="#createNewPipe" class="create-button">Create A New Pipe</a>
-		</li>
+        <li ui-sref-active="active" ng-class="{'active':selectedPage === 'createpipe'}">
+            <a ng-click="collapsePipeNavMenu(); selectedPage = 'createpipe'" ui-sref="createpipe">Create A New Pipe</a>
+        </li>
 		<li class="pipes-loading-sidebar ng-hide">
 			<span>Loading... </span>
 			<span class="glyphicon glyphicon-refresh glyphicon-spinner pipes-loading-spinner"></span>
 		</li>
-		<li pipes-loading-directive ng-repeat="pipe in pipes" ng-init="connected = pipe.hasOwnProperty('tables')" class="panel" ng-mouseenter="showRemove = true" ng-mouseleave="showRemove = false" ng-class="{panelHover:showRemove}">
+		<li pipes-loading-directive ng-repeat="pipe in pipes" ng-init="connected = pipe.hasOwnProperty('tables')" class="panel">
 			<a class="collapsed pipeLink" data-toggle="collapse" data-parent="#accordion" href="#{{pipe._id}}" id="{{pipe._id}}_collapse"><span class="ellipsize">{{pipe.name}}</span></a>
-			<a href="javascript:;" data-toggle="modal" data-target="#deletePipe" class="remove-link" ng-show="showRemove" data-pipeId="{{pipe._id}}" title="Delete Pipe">
-          		<span class="glyphicon glyphicon-remove"></span>
-        	</a>
 <!--
 			<span class="glyphicon glyphicon-refresh glyphicon-spinner"></span>
 -->
@@ -37,6 +34,9 @@
 					<a ng-if="connected" ng-class="{'active':selectedPage === 'monitoring'}" ng-click="selectedPage = 'monitoring'" ui-sref="home.pipeDetails.tab({tab:'monitoring', id:pipe._id})">Activity</a>
 					<a ng-if="!connected">Activity</a>
 				</li>
+                <li ui-sref-active="active">
+                    <a ng-class="{'active':selectedPage === 'settings'}" ng-click="selectedPage = 'settings'" ui-sref="home.pipeDetails.tab({tab:'settings', id:pipe._id})">Settings</a>
+                </li>
 			</ul>
 		</li>
 		<li ui-sref-active="active" ng-class="{'active':selectedPage === 'faq'}">

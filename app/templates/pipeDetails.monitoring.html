@@ -17,7 +17,7 @@
 	<p class="selected-pipe-activiy">
 		<span class="ellipsize">{{ allPipesSelected ? 'All Pipes' : selectedPipe.name }}</span> <span>Activity</span>
 	</p>
-	<div class="selected-pipe-activiy-btn btn-group">
+	<div class="selected-pipe-activiy-btn btn-group" ng-show="pipeslist && pipeslist.length > 1">
 	  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
 	    {{ allPipesSelected ? 'All Pipes' : 'Current Pipe' }} <span class="caret"></span>
 	  </button>
@@ -73,10 +73,13 @@
 			</thead>
 			<tbody>
 				<tr ng-repeat="stat in activeRun.tableStats | sortBy:'tableName'">
-					<td>{{stat.tableName}}</td>
-					<td><span class="piperecord">{{stat.numRecords | number}}</span></td>
-					<td>{{stat.errors[0].message}}</td>
-				</tr>
+                    <td>
+                        <a ng-show="activeRun.dbUrlPrefix" href="{{activeRun.dbUrlPrefix + stat.dbName}}" target="_blank">{{stat.tableName}}</a>
+                        <span ng-show="!activeRun.dbUrlPrefix">{{stat.tableName}}</span>
+                    </td>
+                    <td><span class="piperecord">{{stat.numRecords | number}}</span></td>
+                    <td>{{stat.errors[0].message}}</td>
+                </tr>
 			</tbody>
 		</table>
 	</div>

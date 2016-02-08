@@ -197,8 +197,20 @@ li.panel > ul.nav > li.disabled > a {
 	top: -60px;
 	border: none !important;
 }
-.nav-sidebar > li > a.create-button {
-	color: #808080 !important;
+#createPipeBody {
+	width: 33%;
+}
+#createPipeBody > .form-group {
+	margin-left: 0;
+    margin-right: 0;
+}
+.pipe-settings-delete > span {
+	font-weight: bold;
+    margin-right: 30px;
+}
+#deletePipeConfirm {
+	margin-top: 30px;
+	outline: none;
 }
 tbody > tr > td.selectedRunDetailERROR,
 tbody > tr.selectedRunDetailERROR > td {
