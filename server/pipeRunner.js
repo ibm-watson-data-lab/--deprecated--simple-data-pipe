@@ -36,7 +36,7 @@ function pipeRunner( pipe ){
 		if ( !connector ){
 			return console.log("Can't find connector %s", pipe.connectorId );
 		}
-		return connector.runStarted(readyCallback);
+		return connector.runStarted(readyCallback, pipe);
 	}
 	
 	var runFinished = function(){
@@ -44,7 +44,7 @@ function pipeRunner( pipe ){
 		if ( !connector ){
 			return console.log("Can't find connector %s", pipe.connectorId );
 		}
-		return connector.runFinished();
+		return connector.runFinished(pipe);
 	}
 	
 	//Public APIs
