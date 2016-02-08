@@ -26,8 +26,8 @@
 					<a ng-class="{'active':selectedPage === 'connection'}" ng-click="selectedPage = 'connection'" ui-sref="home.pipeDetails.tab({tab:'connection', id:pipe._id})">Connect</a>
 				</li>
 				<li ng-class="{'disabled':!connected}" ui-sref-active="active">
-					<a ng-if="connected" ng-class="{'active':selectedPage === 'tables'}" ng-click="selectedPage = 'tables'" ui-sref="home.pipeDetails.tab({tab:'tables', id:pipe._id})">Pick Tables</a>
-					<a ng-if="!connected">Pick Tables</a>
+					<a ng-if="connected" ng-class="{'active':selectedPage === 'tables'}" ng-click="selectedPage = 'tables'" ui-sref="home.pipeDetails.tab({tab:'tables', id:pipe._id})">Filter data</a>
+					<a ng-if="!connected">Filter data</a>
 				</li>
 				<li ng-class="{'disabled':!connected}" ui-sref-active="active">
 					<a ng-if="connected" ng-class="{'active':selectedPage === 'scheduling'}" ng-click="selectedPage = 'scheduling'" ui-sref="home.pipeDetails.tab({tab:'scheduling', id:pipe._id})">Schedule</a>
