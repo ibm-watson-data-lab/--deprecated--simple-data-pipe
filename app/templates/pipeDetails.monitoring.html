@@ -74,8 +74,8 @@
 			<tbody>
 				<tr ng-repeat="stat in activeRun.tableStats | sortBy:'tableName'">
                     <td>
-                        <a ng-show="activeRun.dbUrlPrefix" href="{{activeRun.dbUrlPrefix + stat.dbName}}" target="_blank">{{stat.tableName}}</a>
-                        <span ng-show="!activeRun.dbUrlPrefix">{{stat.tableName}}</span>
+                        <a ng-show="activeRun.dbUrl" href="{{activeRun.dbUrl.replace('{dbname}', stat.dbName)}}" target="_blank">{{stat.tableName}}</a>
+                        <span ng-show="!activeRun.dbUrl">{{stat.tableName}}</span>
                     </td>
                     <td><span class="piperecord">{{stat.numRecords | number}}</span></td>
                     <td>{{stat.errors[0].message}}</td>

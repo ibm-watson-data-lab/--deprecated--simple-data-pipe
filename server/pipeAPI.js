@@ -119,7 +119,7 @@ module.exports = function( app ){
 						//No runs yet, return empty array
 						return res.json( [] );
 					}
-					return res.json( injectDbUrlPrefix(data.rows) );
+					return res.json( injectDbUrl(data.rows) );
 				}
 			);
 		});
@@ -138,24 +138,24 @@ module.exports = function( app ){
 						//No runs yet, return empty array
 						return res.json( [] );
 					}
-					return res.json( injectDbUrlPrefix(data.rows) );
+					return res.json( injectDbUrl(data.rows) );
 				}
 			);
 		});
 	});
 	
-	var injectDbUrlPrefix = function(rows) {
+	var injectDbUrl = function(rows) {
 		var storageUrl = null;
 		if (pipesDb.storageDb && pipesDb.storageDb.config) {
 			storageUrl = pipesDb.storageDb.config.url ? pipesDb.storageDb.config.url : null;
 			if (storageUrl) {
 				if (storageUrl.indexOf("cloudant.com") > -1) {
 					//cloudant.com
-					storageUrl += "/dashboard.html#/database/";
+					storageUrl += "/dashboard.html#/database/{dbname}/_all_docs";
 				}
 				else {
 					//couchdb
-					storageUrl += "/_utils/database.html?";
+					storageUrl += "/_utils/database.html?{dbname}";
 				}
 			}
 		}
@@ -164,7 +164,7 @@ module.exports = function( app ){
 			//strip credential from url (e.g., http://username:password@localhost)
 			storageUrl = storageUrl.replace(/:\/\/\S+:\S+@/i,"://");
 			var updateRows = _.forEach(rows, function(row, index) {
-				row.doc ? row.doc["dbUrlPrefix"] = storageUrl : row["dbUrlPrefix"] = storageUrl;
+				row.doc ? row.doc["dbUrl"] = storageUrl : row["dbUrl"] = storageUrl;
 			});
 			return updateRows;
 		}
