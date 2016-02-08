@@ -30,3 +30,5 @@ logs
 tests/config
 
 config
+
+.externalToolBuilders
