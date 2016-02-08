@@ -119,7 +119,7 @@ module.exports = function( app ){
 						//No runs yet, return empty array
 						return res.json( [] );
 					}
-					return res.json( data.rows );
+					return res.json( injectDbUrl(data.rows) );
 				}
 			);
 		});
@@ -138,11 +138,40 @@ module.exports = function( app ){
 						//No runs yet, return empty array
 						return res.json( [] );
 					}
-					return res.json( data.rows );
+					return res.json( injectDbUrl(data.rows) );
 				}
 			);
 		});
 	});
+	
+	var injectDbUrl = function(rows) {
+		var storageUrl = null;
+		if (pipesDb.storageDb && pipesDb.storageDb.config) {
+			storageUrl = pipesDb.storageDb.config.url ? pipesDb.storageDb.config.url : null;
+			if (storageUrl) {
+				if (storageUrl.indexOf("cloudant.com") > -1) {
+					//cloudant.com
+					storageUrl += "/dashboard.html#/database/{dbname}/_all_docs";
+				}
+				else {
+					//couchdb
+					storageUrl += "/_utils/database.html?{dbname}";
+				}
+			}
+		}
+		
+		if (storageUrl) {
+			//strip credential from url (e.g., http://username:password@localhost)
+			storageUrl = storageUrl.replace(/:\/\/\S+:\S+@/i,"://");
+			var updateRows = _.forEach(rows, function(row, index) {
+				row.doc ? row.doc["dbUrl"] = storageUrl : row["dbUrl"] = storageUrl;
+			});
+			return updateRows;
+		}
+		else {
+			return rows;
+		}
+	};
 	
 	/**
 	 * Private API for running a pipe
@@ -202,7 +231,16 @@ module.exports = function( app ){
 		//Get the connector for this pipeid
 		connectorAPI.getConnectorForPipeId( req.params.pipeId, function( err, connector ){
 			if ( err ){
-				return global.jsonError( res, err );
+				console.log(err);
+				if (req.params.tab !== "settings") {
+					defaultFileServer.serveFile("connectorError.html", 200, {}, req, res);
+//					return global.jsonError( res, err );
+				}
+			}
+			
+			if (req.params.tab === "settings") {
+				//allow 'settings' page to be served at all times
+				defaultFileServer.serveFile("pipeSettings.html", 200, {}, req, res);
 			}
 			
 			//The filename to look for (can come from the connector or the default location)

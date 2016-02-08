@@ -1,0 +1,33 @@
+<h1>
+  Create A New Pipe
+</h1>
+<form name="newPipeForm" class="form-horizontal" novalidate>
+  <div id="createPipeBody">
+      <div class="form-group" ng-class="{'has-error':newPipeForm.type.$invalid && (!newPipeForm.type.$pristine || newPipeForm.name.$valid)}">
+          <label for="pipe-type">Type:</label>
+          <select class="form-control" id="pipe-type" name="type" ng-model="creatingConnector.connectorId" required>
+              <option ng-repeat="connector in connectors" value="{{connector.id}}">{{connector.label}}</option>
+          </select>
+          <p class="help-block" ng-show="newPipeForm.type.$invalid && (!newPipeForm.type.$pristine || newPipeForm.name.$valid)">Type is required.</p>
+      </div>
+      <div class="form-group" ng-class="{'has-error':newPipeForm.name.$invalid && !newPipeForm.name.$pristine}">
+          <label for="pipe-name">Name:</label>
+          <input type="text" class="form-control" id="pipe-name" name="name" ng-model="creatingConnector.name" ng-change="createNewPipeNameSet()" required>
+          <p class="help-block" ng-show="newPipeForm.name.$error.required && !newPipeForm.name.$pristine">Name is required.</p>
+          <p class="help-block" ng-show="newPipeForm.name.$error.exists && !newPipeForm.name.$pristine">Name already exists.</p>
+          <p class="help-block" ng-show="newPipeForm.name.$error.invalid && !newPipeForm.name.$error.required && !newPipeForm.name.$pristine">Name is invalid.</p>
+      </div>
+      <div class="form-group">
+          <label for="pipe-description">Description:</label>
+          <textarea class="form-control" id="pipe-description" ng-model="creatingConnector.description"></textarea>
+      </div>
+  </div>
+ 
+  <section class="process">
+    <button type="button" class="save buttonBarSave" ng-class="['btn', 'btn-primary' ]" 
+        ng-click="createNewPipe(creatingConnector)" ng-disabled="newPipeForm.$invalid">Save and continue</button>
+  
+    <button type="button" class="next buttonBarSkip" ng-class="['btn', 'btn-default' ]" ng-click="$state.go('about')">Cancel</button>
+  </section>
+
+</form>

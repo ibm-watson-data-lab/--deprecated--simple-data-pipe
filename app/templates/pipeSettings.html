@@ -1,0 +1,16 @@
+<h1>
+  Settings
+</h1>
+
+<div class="pipe-settings">
+  <div class="pipe-settings-delete">
+    <span>Delete Pipe {{selectedPipe.name}}</span>
+    <button data-toggle="collapse" data-target="#deletePipeConfirm" class="btn btn-primary btn-danger">Delete</button>
+  </div>
+</div>
+
+<div class="collapse" id="deletePipeConfirm" tabindex="-1" role="dialog">
+  <p>Are you sure you want to delete pipe {{selectedPipe.name}}?</p>
+  <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#deletePipeConfirm">Cancel</button>
+  <button id="deletebutton" type="button" class="btn btn-primary" ng-click="removePipe(selectedPipe._id)">Delete Pipe</button>
+</div>

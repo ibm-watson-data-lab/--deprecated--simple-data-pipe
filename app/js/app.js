@@ -32,20 +32,31 @@ var mainApp = angular.module('dataMovingApp', [
         .state('home', {
             url:'',
             views: {
-              'pipeList': {
-                  templateUrl: '/templates/pipeList.html',
-                  controller: 'pipesController'
-              },
               'pipeDetails':{
                 templateUrl: "/templates/pipeDetails.about.html"
               },
               'pipeSidebar':{
                 templateUrl: "/templates/pipeSidebar.html",
                 controller: 'pipesController'
-              },
-              'pipeCreateDialog':{
-            	  templateUrl: "/templates/pipeCreateDialog.html",
-            	  controller: function($scope, $controller, pipesService){
+              }
+          }
+        })
+        .state('about', {
+        	parent: 'home',
+        	url:'/about',
+        	views: {
+        		'pipeDetails@': {
+        			templateUrl: '/templates/pipeDetails.about.html'
+        		}
+        	}
+        })
+        .state('createpipe', {
+        	parent: 'home',
+        	url:'/createpipe',
+        	views: {
+        		'pipeDetails@': {
+        			templateUrl: '/templates/pipeDetails.createpipe.html',
+        			controller: function($scope, $controller, pipesService){
             		  //call Parent controller
             		  $controller('pipesController', {$scope: $scope});
             		  pipesService.getConnectors().then(
@@ -56,18 +67,6 @@ var mainApp = angular.module('dataMovingApp', [
             				 }
             		  );
             	  }
-              },
-              'pipeDeleteDialog':{
-            	  templateUrl: "/templates/pipeDeleteDialog.html"
-              }
-          }
-        })
-        .state('about', {
-        	parent: 'home',
-        	url:'/about',
-        	views: {
-        		'pipeDetails@': {
-        			templateUrl: '/templates/pipeDetails.about.html'
         		}
         	}
         })
@@ -213,7 +212,6 @@ var mainApp = angular.module('dataMovingApp', [
 		        console.log("Pipe " + response._id + " successfully saved");
 		        setTimeout( function(){
 		        	pipesService.listPipes();
-		        	$('#createNewPipe').modal('hide');
 		        	$rootScope.$state.go("home.pipeDetails.tab", {tab:"connection", id: response._id }, { reload: true });
 		        },500);
 		      },
@@ -229,7 +227,7 @@ var mainApp = angular.module('dataMovingApp', [
   }
   
   $rootScope.createNewPipeNameSet = function() {
-	  var name = newPipeForm.name.value;
+	  var name = this.creatingConnector.name;
 	  //match cloudant naming requirements
 	  var patt = new RegExp(/^[a-zA-Z][a-zA-Z0-9_$()+\-/]*$/);
 	  
@@ -238,7 +236,7 @@ var mainApp = angular.module('dataMovingApp', [
 		  if (_.find($scope.pipes, function(pipe) {
 			  return pipe.name == name;
 		  })) {
-			  $scope.newPipeForm.name.$setValidity("exists", false);
+			  	$scope.newPipeForm.name.$setValidity("exists", false);
 		  }
 		  else {
 			  $scope.newPipeForm.name.$setValidity("exists", true);
@@ -248,7 +246,6 @@ var mainApp = angular.module('dataMovingApp', [
 		  $scope.newPipeForm.name.$setValidity("exists", true);
 		  $scope.newPipeForm.name.$setValidity("invalid", false);
 	  }
-	  
   }
 
   $rootScope.collapsePipeNavMenu = function(pipeId) {
@@ -296,7 +293,6 @@ var mainApp = angular.module('dataMovingApp', [
           console.log("Pipe " + pipeid + " successfully removed");
           setTimeout( function(){
         	pipesService.listPipes();
-        	$('#deletePipe').modal('hide');
         	$rootScope.$state.go("about", null, { reload: true });
           },500);
         },
@@ -306,13 +302,6 @@ var mainApp = angular.module('dataMovingApp', [
       );
     }
   }
-  
-  //delete pipe
-  $('#deletePipe').on('show.bs.modal', function (event) {
-	  var sourceElt = $(event.relatedTarget);
-	  $rootScope.pipeToDelete = JSON.parse( JSON.stringify( pipesService.findPipe(sourceElt.data('pipeid')) ));
-	  $rootScope.$apply();
-  });
  }]
 )
 
@@ -591,6 +580,14 @@ var mainApp = angular.module('dataMovingApp', [
     }
 
     $scope.fetchRuns(false);
+    
+    pipesService.listPipes().then(
+      function(pipes){
+        $scope.pipeslist = pipes;
+      },function( reason ){
+        console.log("error reading list of pipes: " + reason );
+      }
+    );
   }]
 )
 
