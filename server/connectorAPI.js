@@ -96,7 +96,8 @@ function connectorAPI(){
 				}
 				//console.log("ls data: ", data)
 				_.forEach(data.dependencies, function(value, key ){
-					if ( value.hasOwnProperty("pipes-connector-name") ){
+
+					if((value.hasOwnProperty("simple_data_pipe")) || (value.hasOwnProperty("pipes-connector-name"))) {
 						//Found a pipe connector module, load it now
 						var connector = loadConnector( value.path );
 						if ( connector ){						
