@@ -234,6 +234,7 @@ module.exports = function( app ){
 				console.log(err);
 				if (req.params.tab !== "settings") {
 					defaultFileServer.serveFile("connectorError.html", 200, {}, req, res);
+					return;
 //					return global.jsonError( res, err );
 				}
 			}
@@ -242,19 +243,19 @@ module.exports = function( app ){
 				//allow 'settings' page to be served at all times
 				defaultFileServer.serveFile("pipeSettings.html", 200, {}, req, res);
 			}
-			
-			//The filename to look for (can come from the connector or the default location)
-			var fileName = 'pipeDetails.' + req.params.tab + '.html';
-			
-			//Try the connectorsFileServer first
-			connector.fileServer = connector.fileServer || new nodeStatic.Server( connector.path);
-			connector.fileServer
-				.serveFile( "templates/" + fileName, 200, {}, req, res )
-				.on("error",function(err){
-					//console.log("Not able to serve from connectorsFileServer: " + err );
-					defaultFileServer.serveFile(fileName, 200, {}, req,res);
-				 });
-			
+			else {
+				//The filename to look for (can come from the connector or the default location)
+				var fileName = 'pipeDetails.' + req.params.tab + '.html';
+				
+				//Try the connectorsFileServer first
+				connector.fileServer = connector.fileServer || new nodeStatic.Server( connector.path);
+				connector.fileServer
+					.serveFile( "templates/" + fileName, 200, {}, req, res )
+					.on("error",function(err){
+						//console.log("Not able to serve from connectorsFileServer: " + err );
+						defaultFileServer.serveFile(fileName, 200, {}, req,res);
+					 });
+			}
 		});
 	});
 	
