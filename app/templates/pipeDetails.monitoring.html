@@ -1,121 +1,126 @@
-<div ng-if="!selectedPipe">
-	<div>Invalid Selection. No pipe is currently selected</div>
-</div>
 
-<div ng-show="!isPipeRunning() && !runningAnchor">
-	<h1>
-		Activity
-	</h1>
-	<p>
+<section class="layout_section theme_light">
+
+  <h1 class="type_heading" ng-show="!isPipeRunning() && !runningAnchor"><mark class="type_mark">Activity</mark></h1>
+  <h1 class="type_heading" ng-show="isPipeRunning() || runningAnchor"><mark class="type_mark">Pipe Progress</mark></h1>
+
+</section>
+
+<section class="layout_section" ng-show="!isPipeRunning() && !runningAnchor">
+
+	<p class="type_copy">
 		Status information and details about your pipe runs.
 	</p>
+    
+    <div class="button_group">
+        <button type="button" class="button_primary"
+            ng-click="disableRunNow=true;runNow()"
+            ng-class="{'disabled': disableRunNow}"
+            ng-disabled="disableRunNow"> Run now </button>
+    </div>
+    
+    <div class="form_container">
+    	<div class="type_subhead">
+    		<mark class="type_mark"><span class="ellipsize">{{ allPipesSelected ? 'All Pipes' : selectedPipe.name }}</span> Activity</mark>
+    	</div>
+        
+        <select class="input_select input_narrow" id="pipe-type" name="type" ng-init="theselectedpipes = 'current'"
+            ng-show="pipeslist && pipeslist.length > 1" ng-model="theselectedpipes"
+            ng-change="allPipesSelected = theselectedpipes === 'all';runningAnchor=false;fetchRuns(allPipesSelected);activateRun()">
+            <option value="current">Current Pipe</option>
+            <option value="all">All Pipes</option>
+        </select>
+    </div>
+    
+    <p class="alert-container warning" ng-hide="runs && runs.length > 0">
+        No pipes have been run yet. Run one now, or schedule one.
+    </p>
 
-	<p>
-		<button type="button" class="btn btn-primary" ng-click="disableRunNow=true;runNow()" ng-class="{'disabled': disableRunNow}">Run now</button>
-	</p>
+    <div class="table_container">
+    	<table class="table_basic" ng-show="runs && runs.length > 0">
+    		<thead>
+    			<tr>
+    				<th>Date/Time</th>
+    				<th ng-if="allPipesSelected">Pipe</th>
+    				<th><span class="piperecord">Records Processed</span></th>
+    				<th>Run Time</th>
+    				<th>Message</th>
+    				<th>Detail</th>
+    			</tr>
+    		</thead>
+    		<tbody>
+    			<tr ng-repeat="run in runs | sortBy:'startTimeUTC':true" ng-class="{'ERROR':'danger', 'RUNNING':'info', 'FINISHED':'success'}[run.status]"
+    				class="{{run.startTime == activeRun.startTime && run.pipeId == activeRun.pipeId && 'selectedRunDetail'+run.status || ''}}">
+    				<td>{{run.startTime}}</td>
+    				<td ng-if="name=getPipeName(run);allPipesSelected" class="pipename">
+    					<span ng-if="name" class="ellipsize">{{name}}</span>
+    					<span ng-if="!name" class="pipenotfound">Pipe no longer exists</span>
+    				</td>
+    				<td><span class="piperecord">{{run.numRecords | number}}</span></td>
+    				<td>{{run.elapsedTime}}</td>
+    				<td>{{run.message}}</td>
+    				<td>
+    					<a class="type_link" ng-click="activateRun(run)">
+    						Details
+    					</a>
+    				</td>
+    			</tr>
+    		</tbody>
+    	</table>
+    </div>
 
-	<p class="selected-pipe-activiy">
-		<span class="ellipsize">{{ allPipesSelected ? 'All Pipes' : selectedPipe.name }}</span> <span>Activity</span>
-	</p>
-	<div class="selected-pipe-activiy-btn btn-group" ng-show="pipeslist && pipeslist.length > 1">
-	  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-	    {{ allPipesSelected ? 'All Pipes' : 'Current Pipe' }} <span class="caret"></span>
-	  </button>
-	  <ul class="dropdown-menu">
-	    <li><span ng-click="allPipesSelected = !allPipesSelected;runningAnchor=false;fetchRuns(allPipesSelected);activateRun()">{{ allPipesSelected ? 'Current Pipe' : 'All Pipes' }}</span></li>
-	  </ul>
-	</div>
-
-	<p ng-hide="runs && runs.length > 0">
-		No pipes have been run yet. Run one now, or schedule one.
-	</p>
-
-	<table class="table table-condensed table-hover" ng-show="runs && runs.length > 0">
-		<thead>
-			<tr>
-				<th>Date/Time</th>
-				<th ng-if="allPipesSelected">Pipe</th>
-				<th><span class="piperecord">Records Processed</span></th>
-				<th>Run Time</th>
-				<th>Message</th>
-				<th>Detail</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr ng-repeat="run in runs" ng-class="{'ERROR':'danger', 'RUNNING':'info', 'FINISHED':'success'}[run.status]"
-				class="{{run.startTime == activeRun.startTime && run.pipeId == activeRun.pipeId && 'selectedRunDetail'+run.status || ''}}">
-				<td>{{run.startTime}}</td>
-				<td ng-if="name=getPipeName(run);allPipesSelected" class="pipename">
-					<span ng-if="name" class="ellipsize">{{name}}</span>
-					<span ng-if="!name" class="pipenotfound">Pipe no longer exists</span>
-				</td>
-				<td><span class="piperecord">{{run.numRecords | number}}</span></td>
-				<td>{{run.elapsedTime}}</td>
-				<td>{{run.message}}</td>
-				<td>
-					<a ng-click="activateRun(run)">
-						Details
-					</a>
-				</td>
-			</tr>
-		</tbody>
-	</table>
-
-	<div ng-show="activeRun" class="panel" ng-class="{'ERROR':'panel-danger', 'RUNNING':'panel-info', 'FINISHED':'panel-success'}[activeRun.status]">
-	  <div class="panel-heading">
-	    <h3 class="panel-title">Pipe Run Details</h3>
-	  </div>
-		<table class="table">
-			<thead>
-				<th>Table Name</th>
-				<th><span class="piperecord">Records</span></th>
-				<th>Status</th>
-			</thead>
-			<tbody>
-				<tr ng-repeat="stat in activeRun.tableStats | sortBy:'tableName'">
+	<div ng-show="activeRun" ng-class="{'ERROR':'panel-danger', 'RUNNING':'panel-info', 'FINISHED':'panel-success'}[activeRun.status]">
+      <hr>
+      
+      <h1 class="type_subhead"><mark class="type_mark">Pipe Run Details</mark></h1>
+      
+      <div class="table_container">
+        <table class="table_basic">
+    		<thead>
+    			<th>Table Name</th>
+    			<th><span class="piperecord">Records</span></th>
+    			<th>Status</th>
+    		</thead>
+    		<tbody>
+    			<tr ng-repeat="stat in activeRun.tableStats | sortBy:'tableName'">
                     <td>
-                        <a ng-show="activeRun.dbUrl" href="{{activeRun.dbUrl.replace('{dbname}', stat.dbName)}}" target="_blank">{{stat.tableName}}</a>
+                        <a class="type_link" ng-show="activeRun.dbUrl" href="{{activeRun.dbUrl.replace('{dbname}', stat.dbName)}}" target="_blank">{{stat.tableName}}</a>
                         <span ng-show="!activeRun.dbUrl">{{stat.tableName}}</span>
                     </td>
                     <td><span class="piperecord">{{stat.numRecords | number}}</span></td>
                     <td>{{stat.errors[0].message}}</td>
-                </tr>
-			</tbody>
-		</table>
+                  </tr>
+    		</tbody>
+	   </table>
+     </div>
 	</div>
 
-</div>
+</section>
 
-<div ng-show="isPipeRunning() || runningAnchor" ng-model="currentRun">
-	<div class="container-fluid">
-		<h1>
-			Pipe Progress
-		</h1>
+<section class="layout_section" ng-show="isPipeRunning() || runningAnchor" ng-model="currentRun">
 
-		<p ng-show="steps[0].status === 'NOT_STARTED'">
-			Initializing pipe...
-		</p>
-		<div class="progress" ng-show="steps[0].percent">
-		  <div class="progress-bar progress-bar-success" ng-repeat="step in steps" style="width: {{ step.percent / steps.length }}%">
-		    <span class="sr-only">{{ step.percent / steps.length }}% Complete</span>
-		  </div>
-		</div>
+    <p class="type_copy" ng-show="steps[0].status === 'NOT_STARTED'">
+        Initializing pipe...
+    </p>
+    
+    <!-- <progress class="_progress" value="{{totalProgress}}" max="{{steps.length * 100}}" ng-show="steps[0].percent"></progress> -->
+    
+    <div class="progress" ng-show="steps[0].percent">
+      <div class="progress-bar progress-bar-success" ng-repeat="step in steps" style="width: {{ step.percent / steps.length }}%">
+        <!-- <span class="sr-only">{{ step.percent / steps.length }}% Complete</span> -->
+      </div>
+    </div>
+    
+    <p class="type_copy" ng-repeat="step in steps" ng-show="step.status === 'RUNNING'">
+        {{ step.label }}
+    </p>
 
-		<p ng-repeat="step in steps" ng-show="step.status === 'RUNNING'">
-			{{ step.label }}
-		</p>
+    <p class="type_copy" ng-show="steps[steps.length - 1].status === 'FINISHED'">
+        Pipe run complete!
+    </p>
 
-		<p ng-show="steps[steps.length - 1].status === 'FINISHED'">
-			Pipe run complete!
-		</p>
-
-		<p ng-show="!isPipeRunning()">
-			<button class="btn btn-primary" ng-click="allPipesSelected=false;runningAnchor=false;fetchRuns(false)">View details</button>
-		</p>
-<!--
-		<pre>
-			{{ isPipeRunning() | json }}
-		</pre>
--->
-	</div>
-</div>
+    <div class="button_group" ng-show="!isPipeRunning()">
+        <button type="button" class="button_primary" ng-click="allPipesSelected=false;runningAnchor=false;fetchRuns(false)">View details</button>
+    </div>
+    
+</section>

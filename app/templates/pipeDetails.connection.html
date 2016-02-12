@@ -1,72 +1,67 @@
-<h1>
-  Connect to {{selectedConnector.label}} via OAuth
-</h1>
+<section class="layout_section theme_light">
 
-<div ng-show="selectedPipe.tables && selectedPipe.tables.length > 0" class="alert alert-success">
-  <p>
-    <span class="glyphicon glyphicon-ok"></span> <strong>You're connected!</strong> If your OAuth token has expired, <a data-toggle="collapse" data-target="#connect-form">refresh it</a>.
+  <h1 class="type_heading" id="toc_0">
+    <mark class="type_mark">Connect to {{selectedConnector.label}} via OAuth</mark>
+  </h1>
+  <p class="type_copy">
+    <strong>Note</strong>: If this is your first time setting up OAuth in {{selectedConnector.label}}, check out our tutorial for
+    <a href="http://developer.ibm.com/clouddataservices/simple-data-pipe/" target="_blank" class="type_link">more detailed instructions</a>.
   </p>
-</div>
+</section>
+
+<section class="layout_section">
+
+  <p class="alert-container warning" ng-show="selectedPipe.tables && selectedPipe.tables.length > 0">
+    <span class="glyphicon glyphicon-ok"></span> <strong>You're connected!</strong> If your OAuth token has expired, <a class="type_link" ng-click="toggle('connect-form')">refresh it</a>.
+  </p>
 
 <div id="connect-form" ng-class="{collapse: selectedPipe.tables && selectedPipe.tables.length > 0}">
-  <div class="alert alert-info">
-    <p>
-      <strong>Note</strong>: If this is your first time setting up OAuth in {{selectedConnector.label}}, check out our tutorial for <a href="http://developer.ibm.com/clouddataservices/simple-data-pipe/" target="_blank">more detailed instructions</a>.
-    </p>
-  </div>
-  <p>
-    Before copying data from {{selectedConnector.label}} to IBM Cloudant, you need to connect to {{selectedConnector.label}} via OAuth. If you don't have admin access to {{selectedConnector.label}}, ask your {{selectedConnector.label}} administrator to grant it to you.
+  
+  <p class="type_copy">
+    Before copying data from {{selectedConnector.label}} to IBM Cloudant, you need to connect to {{selectedConnector.label}} via OAuth.
+    If you don't have admin access to {{selectedConnector.label}}, ask your {{selectedConnector.label}} administrator to grant it to you.
   </p>
 
-  <section>
-    <h2>
-      Add your OAuth callback to {{selectedConnector.label}}
+    <h2 class="type_subhead">
+      <mark class="type_mark">Add your OAuth callback to {{selectedConnector.label}}</mark>
     </h2>
-    <p>
+    <p class="type_copy">
       Copy and paste this callback URL into your {{selectedConnector.label}} app.
     </p>
-    <form class="form-horizontal">
-      <div class="form-group">
-        <label class="control-label col-sm-3">Callback URL</label>
-        <div class="col-sm-9">
-          <p class="form-control-static">{{oauthCallback}}</p>
-        </div>
-      </div>
-    </form>
-  </section>
+    <p class="type_copy form_container">
+      Callback URL: <strong>{{oauthCallback}}</strong>
+    </p>
 
-  <section>
-    <h2>
-      Add your consumer key and secret
+    <h2 class="type_subhead">
+      <mark class="type_mark">Add your consumer key and secret</mark>
     </h2>
-    <p>
+    <p class="type_copy">
       On the same {{selectedConnector.label}} screen, copy your consumer key and secret and paste them here. Then click the connect button.
     </p>
 
-    <form name="pipeConnectionForm" class="form-horizontal" novalidate>
-      <div class="form-group" ng-class="{'has-error':!pipeConnectionForm.clientId.$pristine && pipeConnectionForm.clientId.$invalid}">
-        <label for="clientId" class="control-label col-sm-3">Consumer key</label>
-        <div class="col-sm-9">
-          <input type="text" class="form-control" name="clientId" id="clientId" required ng-model="selectedPipe.clientId" placeholder="{{selectedConnector.label}} consumer key {{!pipeConnectionForm.clientId.$pristine && pipeConnectionForm.clientId.$invalid ? 'is required' : ''}}">
-        </div>
+    <div class="form_container">
+    <form name="pipeConnectionForm" class="form_standard" novalidate>
+      <div class="form_field" ng-class="{'has-error':!pipeConnectionForm.clientId.$pristine && pipeConnectionForm.clientId.$invalid}">
+        <label for="clientId" class="form_label">Consumer key</label>
+        <input type="text" class="input_text input_wide" name="clientId" id="clientId" required ng-model="selectedPipe.clientId" placeholder="{{selectedConnector.label}} consumer key {{!pipeConnectionForm.clientId.$pristine && pipeConnectionForm.clientId.$invalid ? 'is required' : ''}}">
       </div>
 
-      <div class="form-group" ng-class="{'has-error':!pipeConnectionForm.clientSecret.$pristine && pipeConnectionForm.clientSecret.$invalid}">
-        <label for="clientSecret" class="control-label col-sm-3">Consumer secret</label>
-        <div class="col-sm-9">
-          <input type="text" class="form-control" name="clientSecret" id="clientSecret" required ng-model="selectedPipe.clientSecret" placeholder="{{selectedConnector.label}} consumer secret {{!pipeConnectionForm.clientSecret.$pristine && pipeConnectionForm.clientSecret.$invalid ? 'is required' : ''}}">
-        </div>
+      <div class="form_field" ng-class="{'has-error':!pipeConnectionForm.clientSecret.$pristine && pipeConnectionForm.clientSecret.$invalid}">
+        <label for="clientSecret" class="form_label">Consumer secret</label>
+        <input type="text" class="input_text input_wide" name="clientSecret" id="clientSecret" required ng-model="selectedPipe.clientSecret" placeholder="{{selectedConnector.label}} consumer secret {{!pipeConnectionForm.clientSecret.$pristine && pipeConnectionForm.clientSecret.$invalid ? 'is required' : ''}}">
       </div>
-
-      <div class="form-group">
-        <div class="col-sm-offset-3 col-sm-9">
-          <button class="btn btn-primary" data-toggle="modal" data-target="#OAuthWaitLogin" ng-click="savePipe({connect:true})" ng-disabled="pipeConnectionForm.$invalid">Connect to {{selectedConnector.label}}</button>
-        </div>
+      
+      <div class="button_group">
+        <button type="button" class="button_primary" ng-class="{'disabled':connectingpipe || pipeConnectionForm.$invalid}"
+            ng-click="connectingpipe = true;savePipe({connect:true})"
+            ng-disabled="connectingpipe || pipeConnectionForm.$invalid">{{ connectingpipe ? 'Connecting...' : 'Connect to '+selectedConnector.label }}</button>
+        <p class="type_copy" ng-if="connectingpipe">Redirecting to {{selectedConnector.label}}.com. Please wait...</p>
       </div>
     </form>
-  </section>
-</div>
+    </div>
 
+</div>
+<!-- 
 <div class="modal fade" id="OAuthWaitLogin" tabindex="-1" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -80,5 +75,6 @@
     </div>
   </div>
 </div>
-
+ -->
 <page-button-bar nextPageTab="{{selectedPipe.hasOwnProperty('tables') ? 'tables' : ''}}" skipButtonDisabled="{{!selectedPipe.hasOwnProperty('tables')}}"/>
+</section>

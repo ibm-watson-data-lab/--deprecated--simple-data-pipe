@@ -1,44 +1,71 @@
-<h1>
-  Welcome to the Simple Data Pipe
-</h1>
+<section class="layout_section">
+
+  <h1 class="type_heading" id="toc_0">
+    <mark class="type_mark">Welcome to the Simple Data Pipe</mark>
+  </h1>
+<!--
 <div ng-show="selectedPipe.tables && selectedPipe.tables.length > 0" class="alert alert-info">
-  <p>
-    <strong>Welcome back!</strong> Check out <a ng-click="goToNextPage('monitoring')">your pipe activity</a>.
+  <p class="type_copy">
+    <strong>Welcome back!</strong> Check out <a class="type_link" ng-click="goToNextPage('monitoring')">your pipe activity</a>.
   </p>
 </div>
+-->
 
+<hr>
 
-<h2>Move it in</h2>
-<p>
-The Simple Data Pipe moves JSON from web services like Salesforce.com and Stripe, and captures it in Cloudant. Once persisted in Cloudant, you can do all kinds of different stuff.
-</p>
-<ul>
-	<li>
-    <b>First time here?</b> Pause now, and go skim our tutorial on <a href="https://developer.ibm.com/clouddataservices/simple-data-pipe-salesforce-looker/">connecting to Salesforce.com</a> before piping your first data. It will provide an overview of the mechanics of The Pipe, even if you don't need visualizations just yet.
-    </li>
-
-    <li>
-    <b>Start fast:</b> Choose "Create A New Pipe" and use one of the built-in options found under <em>Type</em>. We're always looking to add more. Check our <a href="https://developer.ibm.com/clouddataservices/simple-data-pipe-connectors/">full list of connector options</a> for updates.
-    </li>
-
-    <li>
-    <b>BYOP:</b> Build your own pipe with the <a href="https://developer.ibm.com/clouddataservices/simple-data-pipe-connectors/">JavaScript framework</a> we provide. If you build something cool and want to see it become part of a future Simple Data Pipe, let us know. Contributions are always welcome!
+  <h1 class="type_subhead">
+    <mark class="type_mark">Move it in</mark>
+  </h1>
+  
+  <p class="type_copy">
+    The Simple Data Pipe moves JSON from web services like Salesforce.com and Stripe, and captures it in Cloudant.
+    Once persisted in Cloudant, you can do all kinds of different stuff.
+  </p>
+  
+<ul class="list_unordered">
+<li>
+    <strong>First time here?</strong> Pause now, and go skim our tutorial on
+    <a class="type_link" href="https://developer.ibm.com/clouddataservices/simple-data-pipe-salesforce-looker/">connecting to Salesforce.com</a>
+    before piping your first data. It will provide an overview of the mechanics of The Pipe, even if you don't need visualizations just yet.
+</li>
+<li>
+    <strong>Start fast:</strong> Choose "Create A New Pipe" and use one of the built-in options found under <span class="type_em">Type</span>. We're always looking to add more. Check our
+    <a class="type_link" href="https://developer.ibm.com/clouddataservices/simple-data-pipe-connectors/">full list of connector options</a> for updates.
+</li>
+<li>
+    <strong>BYOP:</strong> Build your own pipe with the <a class="type_link" href="https://developer.ibm.com/clouddataservices/simple-data-pipe-connectors/">JavaScript framework</a>
+    we provide. If you build something cool and want to see it become part of a future Simple Data Pipe, let us know. Contributions are always welcome!
 </li>
 </ul>
 
- <img src="../img/sdp-architecture.png" />
+ <img class="bg_white" src="../img/sdp-architecture.png" />
 
-<h2>Move it out</h2>
-<p>
-Moving data out of Cloudant is just as easy. The database comes with free, native integrations for loading JSON to data warehousing and analytics engines. From there, you're just a step away from the reporting and visualization tools you know and love.
-</p>
+<hr>
 
-<p>
-Use the <a href="https://cloudant.com/blog/introducing-data-warehousing-and-analytics-with-cloudant-and-dashdb/">Cloudant-dashDB integration</a> to sync data into IBM's cloud data warehouse service. There's the Cloudant-Apache Spark integration for those who want to explore JSON in Jupyter notebooks, or break all the rules by using Spark SQL to query "unstructured" JSON. The open-source <a href="https://www.compose.io/articles/transporter-driving-part-one/">Transporter ETL pipeline</a> from Compose.io is a great choice for moving between a range of non-relational data stores like MongoDB, Redis, and Elasticsearch — all of which are, coincidentally, available on IBM's Compose service.
-</p>
-<p>
-Need to go the enterprise route? We have you covered with <a href="https://cloudant.com/dashdb/">IBM's DataWorks</a> data shaping and movement API. It's a paid service, so you'll need to enter credit card info on Bluemix before provisioning.
-</p>
-<p>
-Not ready to leave Cloudant just yet? Visualize JSON right from the database by building secondary indexes to organize data that feeds into visualizations in the <a href="http://www.ibm.com/developerworks/cloud/library/cl-poseidon3-app/index.html">D3.js library</a>.
-</p>
+  <h1 class="type_subhead">
+    <mark class="type_mark">Move it out</mark>
+  </h1>
+
+  <p class="type_copy">
+    Moving data out of Cloudant is just as easy. The database comes with free, native integrations for loading JSON to data warehousing and analytics engines.
+    From there, you're just a step away from the reporting and visualization tools you know and love.
+  </p>
+
+  <p class="type_copy">
+    Use the <a class="type_link" href="https://cloudant.com/blog/introducing-data-warehousing-and-analytics-with-cloudant-and-dashdb/">Cloudant-dashDB integration</a>
+    to sync data into IBM's cloud data warehouse service. There's the Cloudant-Apache Spark integration for those who want to explore JSON in Jupyter notebooks, or break all the rules by using Spark SQL to query "unstructured" JSON.
+    The open-source <a class="type_link" href="https://www.compose.io/articles/transporter-driving-part-one/">Transporter ETL pipeline</a>
+    from Compose.io is a great choice for moving between a range of non-relational data stores like MongoDB, Redis, and Elasticsearch — all of which are, coincidentally, available on IBM's Compose service.
+  </p>
+
+  <p class="type_copy">
+    Need to go the enterprise route? We have you covered with <a href="https://cloudant.com/dashdb/">IBM's DataWorks</a>
+    data shaping and movement API. It's a paid service, so you'll need to enter credit card info on Bluemix before provisioning.
+  </p>
+
+  <p class="type_copy">
+    Not ready to leave Cloudant just yet? Visualize JSON right from the database by building secondary indexes to organize data that feeds into visualizations in the
+    <a class="type_link" href="http://www.ibm.com/developerworks/cloud/library/cl-poseidon3-app/index.html">D3.js library</a>.
+  </p>
+
+</section>

@@ -9,8 +9,7 @@
   <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
   <script src="bower_components/lodash/dist/lodash.compat.js"></script>
   <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
-  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/bootstrap.icon-large.min.css">
+  <link rel="stylesheet" href="css/master.css">
   <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css" type="text/css"/>
 
   <link rel="stylesheet" href="css/main.css" type="text/css" />
@@ -19,82 +18,34 @@
   <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico" />
 
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
-  <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-  <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
   <script src="bower_components/lodash/dist/lodash.min.js"></script>
   <script src="bower_components/moment/min/moment.min.js"></script>
   <script src="js/app.js"></script>
   <script src="js/pipes.js"></script>
 </head>
-<body>
+<body class="capped-layout">
 <!-- start header -->
-	<nav class="navbar navbar-inverse navbar-fixed-top">
-	    <div class="container-fluid">
-	    	<div class="row">
-		        <div class="navbar-header col-sm-6">
-		            <span class="navbar-brand">
-		                <a rel="home" href="https://developer.ibm.com/clouddataservices">
-		                    <span>Cloud Data Services</span>
-		                </a>
-		            </span>
-		        </div>
-				<div class="navbar-header col-sm-6">
-		        	<span class="pull-right" style="margin-top:17px;color:white" ng-if="userid">
-		            	Welcome {{userid}}
-			         </span>
-		        </div>
-	        </div>
-	    </div>
-	</nav>
+  <header class="capped-layout_cap app-banner">
+    <a class="app-banner_title" rel="home" href="https://developer.ibm.com/clouddataservices">IBM Cloud Data Services // Dev</a>
+  </header>
 <!-- end header -->
 
 <!-- start content -->
-	<div class="page-content container-fluid">
-		<div class="row">
-
+  <div class="capped-layout_body bookend-layout">
 <!-- start sidebar -->
-			<div class="col-sm-3 sidebar" ui-view="pipeSidebar">
-				Loading. Please Wait...
-			</div>
+        <nav class="bookend-layout_bookend theme_light bg_white" ui-view="pipeSidebar">
+            <p class="tree-nav_link">Loading. Please Wait...</p>
+        </nav>
 <!-- end sidebar -->
 
 <!-- start main -->
-			<div class="col-sm-9 col-sm-offset-3 main" ui-view="pipeDetails">
-				Loading. Please Wait...
-			</div>
+        <div ui-view="pipeDetails" class="bookend-layout_body theme_dark">
+			<p class="tree-nav_link">Loading. Please Wait...</p>
+		</div>
 <!-- end main -->
 
-		</div>
+		<!-- </div> -->
 	</div>
 <!-- end content -->
-
-<!-- startfooter
-
-  WE DON'T NEED THE IBM FOOTER ON OUR SAMPLE APPS
-
-
-	<div id="pnext-footer" class="pn-footer links-footer" class="mtxl" role="navigation" aria-label="Page footer">
-		<div class="pn-pcon">
-			<div class="pn-columns">
-				<div class="pn-col-6-1">
-					<a class="pn-footer-social-link" href="https://developer.ibm.com/clouddataservices/feed/">
-						<i class="sprite rss-footer"></i><span class="visuallyhidden">RSS Feed</span>
-					</a>
-				</div>
-				<div class="pn-col-6-4">
-					<div class="pn-footer-menu" role="contentinfo">
-						<ul id="menu-footer" class="pn-footer-menu pn-il pn-il--center"><li class='pn-footer-menu-item pn-il-item'><a href='https://www.ibm.com/developerworks/secure/reportabuse?referingURL=https%3A%2F%2Fdeveloper.ibm.com%2Fclouddataservices%2Fblog'>Report Abuse</a></li><li class='pn-footer-menu-item pn-il-item'><a href='/terms-of-use/'>Terms of Use</a></li><li class='pn-footer-menu-item pn-il-item'><a href='/third-party-notice/'>Third Party Notice</a></li><li class='pn-footer-menu-item pn-il-item'><a href='http://www.ibm.com/privacy/'>IBM Privacy</a></li></ul>
-					</div>
-				</div>
-				<div class="pn-col-6-1">
-					<span class="fr">
-						<a href="http://ibm.com"><i class="sprite ibm-smlogo"></i><span class="visuallyhidden">IBM</span></a>
-					</span>
-				</div>
-			</div>
-		</div>
-	</div>
-end footer -->
-
 </body>
 </html>
