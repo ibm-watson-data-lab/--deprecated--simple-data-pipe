@@ -58,13 +58,13 @@ tbody > tr.selectedRunDetailFINISHED > td {
 .theme_dark .button_primary.disabled,
 .theme_dark .button_primary[disabled] {
     background-color: #41d6c3;
-    cursor: initial;
+    cursor: not-allowed;
     opacity: 0.5;
 }
 .theme_dark .button_secondary.disabled,
 .theme_dark .button_secondary[disabled] {
     background-color: inherit;
-    cursor: initial;
+    cursor: not-allowed;
     opacity: 0.5;
 }
 
