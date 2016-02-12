@@ -140,6 +140,7 @@ angular.module('pipes', [],function() {
         		.success(function( data ){
         			var runs = _.map( data, function( row ){
         				var doc = row.doc;
+        				doc["startTimeUTC"] = doc.startTime;
         				doc.startTime = moment( doc.startTime ).format("dddd, MMMM Do YYYY, h:mm:ss a");
         				return doc;
         			});

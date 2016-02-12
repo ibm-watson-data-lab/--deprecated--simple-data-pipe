@@ -613,7 +613,13 @@ var mainApp = angular.module('dataMovingApp', [
 )
 
 .filter('sortBy', function() {
-  return function(items, field) {
-	  return _.sortBy(items, [field]);
+  return function(items, field, reverse) {
+	  var sorted = _.sortBy(items, [field]);
+	  if (reverse) {
+		  return sorted.reverse();
+	  }
+	  else {
+		  return sorted;
+	  }
   };
 })

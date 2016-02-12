@@ -16,7 +16,7 @@
         <button type="button" class="button_primary"
             ng-click="disableRunNow=true;runNow()"
             ng-class="{'disabled': disableRunNow}"
-            ng-disabled="disableRunNow">{{ disableRunNow ? 'Running...' : 'Run now' }}</button>
+            ng-disabled="disableRunNow"> Run now </button>
     </div>
     
     <div class="form_container">
@@ -49,7 +49,7 @@
     			</tr>
     		</thead>
     		<tbody>
-    			<tr ng-repeat="run in runs" ng-class="{'ERROR':'danger', 'RUNNING':'info', 'FINISHED':'success'}[run.status]"
+    			<tr ng-repeat="run in runs | sortBy:'startTimeUTC':true" ng-class="{'ERROR':'danger', 'RUNNING':'info', 'FINISHED':'success'}[run.status]"
     				class="{{run.startTime == activeRun.startTime && run.pipeId == activeRun.pipeId && 'selectedRunDetail'+run.status || ''}}">
     				<td>{{run.startTime}}</td>
     				<td ng-if="name=getPipeName(run);allPipesSelected" class="pipename">
@@ -103,7 +103,13 @@
         Initializing pipe...
     </p>
     
-    <progress class="_progress" value="{{totalProgress}}" max="{{steps.length * 100}}" ng-show="steps[0].percent"></progress>
+    <!-- <progress class="_progress" value="{{totalProgress}}" max="{{steps.length * 100}}" ng-show="steps[0].percent"></progress> -->
+    
+    <div class="progress" ng-show="steps[0].percent">
+      <div class="progress-bar progress-bar-success" ng-repeat="step in steps" style="width: {{ step.percent / steps.length }}%">
+        <!-- <span class="sr-only">{{ step.percent / steps.length }}% Complete</span> -->
+      </div>
+    </div>
     
     <p class="type_copy" ng-repeat="step in steps" ng-show="step.status === 'RUNNING'">
         {{ step.label }}
