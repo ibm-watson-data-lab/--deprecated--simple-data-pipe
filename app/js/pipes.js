@@ -200,9 +200,11 @@ angular.module('pipes', [],function() {
         		//Recompute the steps
         		if ( that.scope.currentRun ){
         			that.scope.steps = [];
+        			that.scope.totalProgress = 0;
         			_.forOwn( that.scope.currentRun, function( value, key ){
         				if ( key.indexOf('step') == 0 ){
         					that.scope.steps.push( value );
+        					that.scope.totalProgress += value.percent || 0;
         				}
         			});
         		}

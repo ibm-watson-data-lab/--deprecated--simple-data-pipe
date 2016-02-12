@@ -1,46 +1,64 @@
-<div class="sidebar-title">
-	Simple Data Pipe
-</div>
-<div>
-	<ul class="nav nav-sidebar" id="accordion">
-		<li ui-sref-active="active" ng-class="{'active':!selectedPage || selectedPage === 'about'}">
-			<a ng-click="collapsePipeNavMenu(); selectedPage = 'about'" ui-sref="about">About</a>
-		</li>
-        <li ui-sref-active="active" ng-class="{'active':selectedPage === 'createpipe'}">
-            <a ng-click="collapsePipeNavMenu(); selectedPage = 'createpipe'" ui-sref="createpipe">Create A New Pipe</a>
-        </li>
-		<li class="pipes-loading-sidebar ng-hide">
-			<span>Loading... </span>
-			<span class="glyphicon glyphicon-refresh glyphicon-spinner pipes-loading-spinner"></span>
-		</li>
-		<li pipes-loading-directive ng-repeat="pipe in pipes" ng-init="connected = pipe.hasOwnProperty('tables')" class="panel">
-			<a class="collapsed pipeLink" data-toggle="collapse" data-parent="#accordion" href="#{{pipe._id}}" id="{{pipe._id}}_collapse"><span class="ellipsize">{{pipe.name}}</span></a>
-<!--
-			<span class="glyphicon glyphicon-refresh glyphicon-spinner"></span>
--->
-			<ul class="nav collapse" id="{{pipe._id}}">
-				<li ui-sref-active="active">
-					<a ng-class="{'active':selectedPage === 'connection'}" ng-click="selectedPage = 'connection'" ui-sref="home.pipeDetails.tab({tab:'connection', id:pipe._id})">Connect</a>
-				</li>
-				<li ng-class="{'disabled':!connected}" ui-sref-active="active">
-					<a ng-if="connected" ng-class="{'active':selectedPage === 'tables'}" ng-click="selectedPage = 'tables'" ui-sref="home.pipeDetails.tab({tab:'tables', id:pipe._id})">Filter data</a>
-					<a ng-if="!connected">Filter data</a>
-				</li>
-				<li ng-class="{'disabled':!connected}" ui-sref-active="active">
-					<a ng-if="connected" ng-class="{'active':selectedPage === 'scheduling'}" ng-click="selectedPage = 'scheduling'" ui-sref="home.pipeDetails.tab({tab:'scheduling', id:pipe._id})">Schedule</a>
-					<a ng-if="!connected">Schedule</a>
-				</li>
-				<li ng-class="{'disabled':!connected}" ui-sref-active="active">
-					<a ng-if="connected" ng-class="{'active':selectedPage === 'monitoring'}" ng-click="selectedPage = 'monitoring'" ui-sref="home.pipeDetails.tab({tab:'monitoring', id:pipe._id})">Activity</a>
-					<a ng-if="!connected">Activity</a>
-				</li>
-                <li ui-sref-active="active">
-                    <a ng-class="{'active':selectedPage === 'settings'}" ng-click="selectedPage = 'settings'" ui-sref="home.pipeDetails.tab({tab:'settings', id:pipe._id})">Settings</a>
-                </li>
-			</ul>
-		</li>
-		<li ui-sref-active="active" ng-class="{'active':selectedPage === 'faq'}">
-			<a ng-click="collapsePipeNavMenu(); selectedPage = 'faq'" ui-sref="faq">FAQ</a>
-		</li>
-	</ul>
-</div>
+
+<ul class="tree-nav" id="accordion">
+  <li class="tree-nav_item">
+    <a  ng-class="{'current':!$root.selectedPage || $root.selectedPage == 'about'}"
+        ui-sref-active="current"
+        ui-sref="about"
+        ng-click="toggle(null, null, 'accordion');$root.selectedPage = 'about'"
+        class="tree-nav_link">Simple Data Pipe</a>
+  </li>
+  <li class="tree-nav_item">
+    <a  ui-sref-active="current"
+        ui-sref="createpipe"
+        ng-click="toggle(null, null, 'accordion');$root.selectedPage = 'createpipe'"
+        class="tree-nav_link">Create A New Pipe</a>
+  </li>
+  <li ng-if="!pipes" class="type_mark">
+    <span class="tree-nav_link">Loading. Please Wait...</span>
+  </li>
+  <li pipes-loading-directive ng-repeat="pipe in pipes" ng-init="connected = pipe.hasOwnProperty('tables')" class="tree-nav_item theme_light bg_white">
+    <a  id="{{pipe._id}}_collapse"
+        ng-click="$root.selectedPage = 'pipe';toggle(pipe._id, true, 'accordion')"
+        ui-sref="home.pipeDetails.tab({tab:'connection', id:pipe._id})"
+        class="tree-nav_link"><span class="ellipsize">{{pipe.name}}</span></a>
+    <ul class="tree-nav collapse" id="{{pipe._id}}">
+      <li class="tree-nav_item">
+        <a  ui-sref-active="current"
+            ui-sref="home.pipeDetails.tab({tab:'connection', id:pipe._id})"
+            class="tree-nav_link">Connect</a>
+      </li>
+      <li class="tree-nav_item">
+        <a  ui-sref-active="current"
+            ui-sref="home.pipeDetails.tab({tab:'tables', id:pipe._id})"
+            class="tree-nav_link"
+            ng-if="connected">Filter Data</a>
+        <a class="tree-nav_link disabled" ng-if="!connected">Filter Data</a>
+      </li>
+      <li class="tree-nav_item">
+        <a  ui-sref-active="current"
+            ui-sref="home.pipeDetails.tab({tab:'scheduling', id:pipe._id})"
+            class="tree-nav_link"
+            ng-if="connected">Schedule</a>
+        <a class="tree-nav_link disabled" ng-if="!connected">Schedule</a>
+      </li>
+      <li class="tree-nav_item">
+        <a  ui-sref-active="current"
+            ui-sref="home.pipeDetails.tab({tab:'monitoring', id:pipe._id})"
+            class="tree-nav_link"
+            ng-if="connected">Activity</a>
+        <a class="tree-nav_link disabled" ng-if="!connected">Activity</a>
+      </li>
+      <li class="tree-nav_item">
+        <a  ui-sref-active="current"
+            ui-sref="home.pipeDetails.tab({tab:'settings', id:pipe._id})"
+            class="tree-nav_link">Settings</a>
+      </li>
+    </ul>
+  </li>
+  <li class="tree-nav_item">
+    <a  ui-sref-active="current"
+        ui-sref="faq"
+        ng-click="toggle(null, null, 'accordion');$root.selectedPage = 'faq'"
+        class="tree-nav_link">FAQ</a>
+  </li>
+</ul>

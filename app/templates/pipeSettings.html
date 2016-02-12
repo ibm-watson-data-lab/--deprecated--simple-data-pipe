@@ -1,16 +1,18 @@
-<h1>
-  Settings
-</h1>
+<section class="layout_section theme_light">
+  <h1 class="type_heading">
+    <mark class="type_mark">Settings</mark>
+  </h1>
+</section>
 
-<div class="pipe-settings">
-  <div class="pipe-settings-delete">
-    <span>Delete Pipe {{selectedPipe.name}}</span>
-    <button data-toggle="collapse" data-target="#deletePipeConfirm" class="btn btn-primary btn-danger">Delete</button>
-  </div>
+<section class="layout_section theme_dark">
+
+<div class="type_copy form_label display_inline">Delete Pipe {{selectedPipe.name}}</div>
+<button name="deletedata" class="button_primary" ng-click="toggle('deleteData', true)">Delete</button>
+
+<div id="deleteData" tabindex="-1" role="dialog" class="collapse">
+  <p class="type_copy" id="deleteDataBody">Are you sure you want to delete this pipe?</p>
+  <button id="deletebutton" type="button" class="button_primary" ng-click="removePipe(selectedPipe._id)">Delete Pipe</button>
+  <button type="button" class="button_secondary" ng-click="toggle('deleteData', false)">Cancel</button>
 </div>
 
-<div class="collapse" id="deletePipeConfirm" tabindex="-1" role="dialog">
-  <p>Are you sure you want to delete pipe {{selectedPipe.name}}?</p>
-  <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#deletePipeConfirm">Cancel</button>
-  <button id="deletebutton" type="button" class="btn btn-primary" ng-click="removePipe(selectedPipe._id)">Delete Pipe</button>
-</div>
+</section>

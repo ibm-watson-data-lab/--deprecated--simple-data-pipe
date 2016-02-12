@@ -1,59 +1,65 @@
-<h1>
-  FAQs
-</h1>
+<section class="layout_section theme_light">
+
+  <h1 class="type_heading">
+    <mark class="type_mark">FAQs</mark>
+  </h1>
+  
+</section>
+
+<section class="layout_section">
 
 <dl class="faqs">
-  <dt>
+  <dt class="list_definition_list">
     Where can I learn more about the Simple Data Pipe?
   </dt>
-  <dd>
-    <p>
-       Check our <a href="https://developer.ibm.com/clouddataservices/simple-data-pipe/">resources page</a> for all things Data Pipe. We keep it updated with tutorials and new connectors.
+  <dd class="list_definition_list">
+    <p class="type_copy">
+       Check our <a class="type_link" href="https://developer.ibm.com/clouddataservices/simple-data-pipe/">resources page</a> for all things Data Pipe. We keep it updated with tutorials and new connectors.
     </p>
   </dd>
-  <dt>
+  <dt class="list_definition_list">
     I found a bug. Where should I report it?
   </dt>
-  <dd>
-    <p>
-      Please <a href="https://github.com/ibm-cds-labs/simple-data-pipe/issues">submit an issue</a> on Github and we'll get right on it.
+  <dd class="list_definition_list">
+    <p class="type_copy">
+      Please <a class="type_link" href="https://github.com/ibm-cds-labs/simple-data-pipe/issues">submit an issue</a> on Github and we'll get right on it.
     </p>
   </dd>
-  <dt>
+  <dt class="list_definition_list">
     Are there limits the amount of data I can move?
   </dt>
-  <dd>
-    <p>
-      No limits we're aware of. We tested up to 100,000 Salesforce.com records. If you pass that threshold and have problems, <a href="https://github.com/ibm-cds-labs/simple-data-pipe/issues">submit an issue</a>.
+  <dd class="list_definition_list">
+    <p class="type_copy">
+      No limits we're aware of. We tested up to 100,000 Salesforce.com records. If you pass that threshold and have problems, <a class="type_link" href="https://github.com/ibm-cds-labs/simple-data-pipe/issues">submit an issue</a>.
     </p>
   </dd>
-  <dt>
+  <dt class="list_definition_list">
     Can I contribute?
   </dt>
-  <dd>
-    <p>
-      Yes, of course. The Simple Data Pipe is open source! We have lots of features planned, including more connectors. Have ideas? We'd love your help. <a href="https://github.com/ibm-cds-labs/simple-data-pipe">Head over to Github</a> and get your pipe on.
+  <dd class="list_definition_list">
+    <p class="type_copy">
+      Yes, of course. The Simple Data Pipe is open source! We have lots of features planned, including more connectors. Have ideas? We'd love your help. <a class="type_link" href="https://github.com/ibm-cds-labs/simple-data-pipe">Head over to Github</a> and get your pipe on.
     </p>
   </dd>
-  <dt>
+  <dt class="list_definition_list">
     How can I build a connection to a Web service?
   </dt>
-  <dd>
-    <p>
-    We provide a <a href="https://developer.ibm.com/clouddataservices/create-your-own-cloud-etl-connector-easy/">JavaScript framework</a> to help you connect your own Web services to the Simple Data Pipe. Before digging in, be sure to check our growing library of <a href="https://developer.ibm.com/clouddataservices/simple-data-pipe-connectors/">prebuilt connectors</a>. We might already have the connection you need.
+  <dd class="list_definition_list">
+    <p class="type_copy">
+    We provide a <a class="type_link" href="https://developer.ibm.com/clouddataservices/create-your-own-cloud-etl-connector-easy/">JavaScript framework</a> to help you connect your own Web services to the Simple Data Pipe. Before digging in, be sure to check our growing library of <a class="type_link" href="https://developer.ibm.com/clouddataservices/simple-data-pipe-connectors/">prebuilt connectors</a>. We might already have the connection you need.
     </p>
   </dd>
-  <dt>
+  <dt class="list_definition_list">
     How can I move data from Cloudant to another database or warehouse?
   </dt>
-  <dd>
-    <p>
+  <dd class="list_definition_list">
+    <p class="type_copy">
       There are several options:
-      <ul>
+      <ul class="list_unordered">
         <li>
-          Out-of-the-box, you can <a href="https://cloudant.com/blog/introducing-data-warehousing-and-analytics-with-cloudant-and-dashdb/">sync data into IBM's dashDB cloud data warehouse</a>. Launch the Cloudant dashboard from the <em>sdp-cloudant-service</em> service tile in your Bluemix application, and the <em>Warehousing</em> tab in the Cloudant UI will walk you through the rest.</li>
+          Out-of-the-box, you can <a class="type_link" href="https://cloudant.com/blog/introducing-data-warehousing-and-analytics-with-cloudant-and-dashdb/">sync data into IBM's dashDB cloud data warehouse</a>. Launch the Cloudant dashboard from the <em>sdp-cloudant-service</em> service tile in your Bluemix application, and the <em>Warehousing</em> tab in the Cloudant UI will walk you through the rest.</li>
         <li>
-          Up for a little config, for a lot of flexibility? The open-source <a href="https://www.compose.io/articles/transporter-driving-part-one/">Transporter ETL pipeline</a> from Compose.io moves data between a range of non-relational data stores like MongoDB, Redis, and Elasticsearch.
+          Up for a little config, for a lot of flexibility? The open-source <a class="type_link" href="https://www.compose.io/articles/transporter-driving-part-one/">Transporter ETL pipeline</a> from Compose.io moves data between a range of non-relational data stores like MongoDB, Redis, and Elasticsearch.
         </li>
         <li>
           Need full API access? We have you covered with <a href="https://cloudant.com/dashdb/">IBM's DataWorks</a> data shaping and movement API. It's a paid service, so you'll need to enter credit card info on Bluemix before provisioning.
@@ -61,20 +67,22 @@
      </ul>
     </p>
   </dd>
-  <dt>
+  <dt class="list_definition_list">
     How can I analyze the data in Cloudant?
   </dt>
-  <dd>
-    <p>
-      For basic aggregations, you can visualize JSON right out of Cloudant via <a href="http://www.ibm.com/developerworks/cloud/library/cl-poseidon3-app/index.html">D3.js</a>. For heavier-duty data analysis, the Cloudant-Apache Spark integration lets you explore JSON in <a href="https://developer.ibm.com/clouddataservices/start-developing-with-spark-and-notebooks/">Jupyter interactive notebooks</a>. You'll need to provision the Apache Spark service on Bluemix, but from there you'll have access to Python, Scala, and Spark SQL to analyze data until your heart's content.
+  <dd class="list_definition_list">
+    <p class="type_copy">
+      For basic aggregations, you can visualize JSON right out of Cloudant via <a class="type_link" href="http://www.ibm.com/developerworks/cloud/library/cl-poseidon3-app/index.html">D3.js</a>. For heavier-duty data analysis, the Cloudant-Apache Spark integration lets you explore JSON in <a class="type_link" href="https://developer.ibm.com/clouddataservices/start-developing-with-spark-and-notebooks/">Jupyter interactive notebooks</a>. You'll need to provision the Apache Spark service on Bluemix, but from there you'll have access to Python, Scala, and Spark SQL to analyze data until your heart's content.
     </p>
   </dd>  
-  <dt>
+  <dt class="list_definition_list">
     Who is behind the Simple Data Pipe?
   </dt>
-  <dd>
-    <p>
-      Sarah Maston and David Taieb from the IBM Cloud Data Services developer advocacy team spearheaded this project, and are driving it forward. There are lots of ways to <a href="https://developer.ibm.com/clouddataservices/connect/">connect with them</a>, if you'd like to learn more.
+  <dd class="list_definition_list">
+    <p class="type_copy">
+      Sarah Maston and David Taieb from the IBM Cloud Data Services developer advocacy team spearheaded this project, and are driving it forward. There are lots of ways to <a class="type_link" href="https://developer.ibm.com/clouddataservices/connect/">connect with them</a>, if you'd like to learn more.
     </p>
   </dd>
 </dl>
+
+</section>

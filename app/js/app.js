@@ -3,8 +3,7 @@
 /* Main App Module */
 var mainApp = angular.module('dataMovingApp', [
   'pipes',
-  'ui.router',
-  'ui.bootstrap'
+  'ui.router'
 ],function($locationProvider) {
     //$locationProvider.html5Mode({'enabled': true, 'requireBase': false});
 })
@@ -183,7 +182,7 @@ var mainApp = angular.module('dataMovingApp', [
 			  }
 			  //expand the pipename menu
 			  if (toParams.id != fromParams.id) {
-				  $rootScope.expandPipeNavMenu(toParams.id);
+				  $rootScope.toggle(toParams.id, true);
 			  }
 			  //default to connection page
 			  if (!toParams.tab) {
@@ -247,41 +246,56 @@ var mainApp = angular.module('dataMovingApp', [
 		  $scope.newPipeForm.name.$setValidity("invalid", false);
 	  }
   }
-
-  $rootScope.collapsePipeNavMenu = function(pipeId) {
-	  var collapsible = null;
-	  if (pipeId) {
-		  collapsible = $("#" + eltId);
-	  }
-	  else {
-		  collapsible = $("li.panel > ul.collapse.in");
-	  }
-	  if (collapsible) {
-		  collapsible.collapse("hide");
-		  if (collapsible.get(0)) {
-			  var menu = $("#" + collapsible.get(0).id + "_collapse");
-			  if (menu) {
-				  menu.addClass("collapsed");
-			  }
-		  }
-	  }
-  }
-
-  $rootScope.expandPipeNavMenu = function(pipeId) {
-	  if (pipeId) {
-		  var collapsible = $("#" + pipeId);
-		  if (collapsible) {
-			  $("#" + pipeId + "_collapse").trigger("click");
-			  collapsible.collapse("show");
-			  if (collapsible.get(0)) {
-				  var menu = $("#" + collapsible.get(0).id + "_collapse");
-				  if (menu) {
-					  menu.focus();
+  
+  $rootScope.toggle = function(domNodeId, expand, accordionNodeId) {
+	  if (accordionNodeId) {
+		  var domNode = $("#" + accordionNodeId + " .expanded");
+		  
+		  //collapse whatever is expanded (with accordion container)
+		  if (domNode.attr("id") && domNode.is(":visible")) {
+			  domNode.slideToggle(500, function() {
+				  domNode.removeClass("expanded");
+				  if (domNode.attr("id") !== domNodeId) {
+					  $rootScope.toggle(domNodeId, expand);
 				  }
-			  }
+			  });
+		  }
+		  else {
+			  $rootScope.toggle(domNodeId, expand);
 		  }
 	  }
-  }
+	  else if (domNodeId) {
+		  var domNode = $("#" + domNodeId);
+		  //expand
+		  if (domNode && !domNode.is(":visible") && expand !== false) {
+			  domNode.addClass("expanded");
+			  domNode.slideToggle(500);
+		  }
+		  //collapse
+		  else if (domNode && domNode.is(":visible") && expand !== true) {
+			  domNode.slideToggle(500, function() {
+				  domNode.removeClass("expanded");
+			  });
+		  }
+	  }
+  };
+  
+//  $rootScope.toggle = function(domNodeId, expand) {
+//	  if (domNodeId) {
+//		  var domNode = $("#" + domNodeId);
+//		  //expand
+//		  if (domNode && !domNode.is(":visible") && expand !== false) {
+//			  domNode.addClass("expanded");
+//			  domNode.slideToggle(500);
+//		  }
+//		  //collapse
+//		  else if (domNode && domNode.is(":visible") && expand !== true) {
+//			  domNode.slideToggle(500, function() {
+//				  domNode.removeClass("expanded");
+//			  });
+//		  }
+//	  }
+//  };
 
   $rootScope.removePipe = function(pipeId){
 	var pipeid = pipeId || $rootScope.$stateParams.id;
@@ -357,11 +371,10 @@ var mainApp = angular.module('dataMovingApp', [
 	  }
 	  //expand the pipename menu
 	  $scope.$timeout(function() {
-//		  $("#" + $scope.selectedPipe._id + "_collapse").trigger("click");
-		  $scope.expandPipeNavMenu($scope.selectedPipe._id);
+		  $scope.toggle($scope.selectedPipe._id, true);
 		  if ($state.params && $state.params.tab) {
 			  $scope.selectedPage = $state.params.tab;
-			  $("li.active").removeClass("active");
+			  $("a.current").removeClass("current");
 			  $("#"+$scope.selectedPipe._id).parent().addClass("active");
 		  }
 	  }, 1);
@@ -393,12 +406,18 @@ var mainApp = angular.module('dataMovingApp', [
     var connect = (Obj.connect === "true" || Obj.connect === true) ? true : false;
     var nextPageTab = Obj.nextPageTab;
 
+    if ( !connect ){
+	    $('#savePipeBody').html( "Saving your pipe. Please wait..." );
+	    $('#savePipeBody').removeClass( "type_mark" );
+    }
+    
     pipesService.savePipe( $scope.selectedPipe ).then(
       function(){
         console.log("Pipe " + $scope.selectedPipe._id + " successfully saved");
+        $scope.$root.savingpipe = false;
         if ( !connect ){
           setTimeout( function(){
-            $('#savePipe').modal('hide');
+      	    $('#savePipeBody').html( "" );
             if(nextPageTab){
               $scope.goToNextPage(nextPageTab);
             }
@@ -411,8 +430,10 @@ var mainApp = angular.module('dataMovingApp', [
       function( err ){
         var message = "Unable to save pipe: " + err;
         console.log(message);
+        $scope.$root.savingpipe = false;
         if ( !connect ){
           $('#savePipeBody').html( message );
+          $('#savePipeBody').addClass( "type_mark" );
         }
       }
     );

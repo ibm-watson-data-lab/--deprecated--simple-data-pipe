@@ -1,23 +1,25 @@
-<h1>
-	Filter data
-</h1>
-<p>
+<section class="layout_section theme_light">
+
+  <h1 class="type_heading" id="toc_0">
+    <mark class="type_mark">Filter data</mark>
+  </h1>
+  
+</section>
+
+<section class="layout_section">
+
+<p class="type_copy">
 	Pick the table you want to copy, or select all tables.
 </p>
 
-<div class="input-group dropdown {{tableMenuOpenClass}}" ng-click="openTableList()">
-	<input type="text" class="form-control" required id="selected_table" ng-model="selectedPipe.selectedTableName">
-	<div class="input-group-btn">
-		<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-			<span class="caret"></span>
-		</button>
-	</div>
-	<ul class="dropdown-menu" style="max-height: 250px; height: 250px; overflow: auto;width:100%">
-		<li ng-repeat="table in getTablesList()" ng-click="selectTable(table)">
-			<a href="javascript:;" >{{table.labelPlural || table.name}} </a>
-		</li>
-	</ul>
+<div class="form_standard">
+    <div class="form_field">
+        <select class="input_select" id="selected_table" name="selectedTable" ng-model="selectedPipe.selectedTableId">
+            <option ng-repeat="table in getTablesList()" value="{{table.name}}" ng-click="selectTable(table)">{{table.labelPlural || table.name}}</option>
+        </select>
+    </div>
 </div>
 
 <page-button-bar connect="false" nextPageTab="scheduling"/>
 
+</section>
