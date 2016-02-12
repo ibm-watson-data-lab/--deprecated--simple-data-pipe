@@ -122,7 +122,7 @@ function connectorAPI(){
 									// verify for each service that an instance is bound to the application
 									_.forEach(module.simple_data_pipe.service_dependencies, function(service, key){
 
-										if((! service.instance_name) || (! service.service_plan) || (! service.instance_name)) {
+										if((! service.service_name) || (! service.service_plan) || (! service.instance_name)) {
 											// at least one mandatory property is missing
 											console.log('Error: Connector ' + module.simple_data_pipe.name + ' in module ' + module.name + ' contains incomplete service declaration: ' + JSON.stringify(service));
 											service_dependencies_ok = false;
