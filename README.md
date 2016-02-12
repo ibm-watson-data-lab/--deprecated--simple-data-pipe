@@ -43,6 +43,8 @@ To deploy manually to Bluemix, simply:
     $ cd simple-data-pipe
     $ cf push
 
+ > The Simple Data Pipe comes with a couple of data source connectors pre-installed. You can deploy additional connectors or build your own. [Visit Connector Central](https://developer.ibm.com/clouddataservices/simple-data-pipe-connectors/) to learn more.
+
 **Note:** You may notice that Bluemix assigns a URL to your application containing a random word. This is defined in the `manifest.yml` file where the `random-route` key set to the value of `true`. This ensures that multiple people deploying this application to Bluemix do not run into naming collisions. To specify your own route, remove the `random-route` line from the `manifest.yml` file and add a `host` key with the unique value you would like to use for the host name.
 
 ### Privacy Notice
