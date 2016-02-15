@@ -1,11 +1,13 @@
-<section class="layout_section">
+<section class="layout_section theme_light">
 
   <h1 class="type_heading">
     <mark class="type_mark">Connector Error</mark>
+    <p class="type_copy">There is an error with the <strong>{{selectedPipe.connectorId}}</strong> connector.</p>
   </h1>
-  
-  <p>
-    There is an error with the <strong>{{selectedPipe.connectorId}}</strong> connector. It might have been deleted.
-  </p>
-  
+</section>
+<section class="layout_section">
+    <p class="alert-container warning">
+      ​The <strong>{{selectedPipe.connectorId}}</strong> connector failed to load data. Check that it's configured properly.
+      <a class="type_link" target="_blank" href="https://github.com/ibm-cds-labs/simple-data-pipe/wiki/Installing-a-Simple-Data-Pipe-Connector">More</a>.
+    </p>
 </section>
