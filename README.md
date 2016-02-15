@@ -5,7 +5,7 @@ The Simple Data Pipe is an app that loads data from cloud data sources into Clou
 ![Bluemix Deployments](https://deployment-tracker.mybluemix.net/stats/eff5ff771f3cfd9e9443463c383565a1/badge.svg)
 
 ## Usage
-To use the Simple Data Pipe, developers first grab the code on Github, and then deploy it to IBM Bluemix, where it runs. It lives at a URL in Bluemix, and comes complete with an AngularJS UI for connecting, scheduling, and reporting. 
+To use the Simple Data Pipe, grab the code on Github, and then deploy it to IBM Bluemix, where it runs. It lives at a URL in Bluemix, and comes complete with an AngularJS UI for connecting, scheduling, and reporting. 
 
 To follow our full tutorial please visit : https://developer.ibm.com/clouddataservices/simple-data-pipe/
 
