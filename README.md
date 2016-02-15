@@ -1,6 +1,6 @@
 # Simple Data Pipe 
 
-The Simple Data Pipe is an app that loads data from cloud data sources into Cloudant, IBM's managed NoSQL database. Out of the box you can load data from salesforce.com and stripe.com. You can load data from other cloud data sources, such as Reddit using [custom connectors] (https://developer.ibm.com/clouddataservices/?page_id=5072&preview=true).
+The Simple Data Pipe is an app that loads data from cloud data sources into Cloudant, IBM's managed NoSQL database. Out of the box you can load data from salesforce.com and stripe.com. You can load data from other cloud data sources, such as Reddit using [custom connectors] (https://developer.ibm.com/clouddataservices/simple-data-pipe-connectors/).
 
 ![Bluemix Deployments](https://deployment-tracker.mybluemix.net/stats/eff5ff771f3cfd9e9443463c383565a1/badge.svg)
 
