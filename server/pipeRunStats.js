@@ -9,7 +9,8 @@ var moment = require("moment");
 var pipesSDK = require('simple-data-pipe-sdk');
 var pipesDb = pipesSDK.pipesDb;
 var _ = require("lodash");
-var global = require("bluemix-helper-config").global;
+var bluemixHelperConfig = require("bluemix-helper-config");
+var global = bluemixHelperConfig.global;
 
 /**
  * PipeRunStats class
@@ -17,7 +18,16 @@ var global = require("bluemix-helper-config").global;
  */
 function pipeRunStats(pipe, steps, callback){
 	this.pipe = pipe;
-	var logger = this.logger = global.getLogger("pipesRun");
+	var logger = this.logger = global.getLogger("sdp_pipe_run");
+
+	var debug_env_var = bluemixHelperConfig.configManager.get('DEBUG') || '';
+	if((debug_env_var.match(/^[\s]*\*[\s]*$/i)) || (debug_env_var.match(/[\s,]+\*[\s,]*/i)) || (debug_env_var.match(/[\s]*sdp_pipe_run[\s]*/i))) {
+		// enable lowest level of logging for data pipe runs if the DEBUG environment variable is set
+		logger.level("trace");
+	}
+
+	logger.info('Setting Simple Data Pipe run log level to ' + logger.level());
+
 	var runDoc = this.runDoc = {
 		type : "run",
 		connectorId : pipe.connectorId,
