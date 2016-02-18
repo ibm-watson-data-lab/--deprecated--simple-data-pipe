@@ -25,8 +25,11 @@ function pipeRunStats(pipe, steps, callback){
 		// enable lowest level of logging for data pipe runs if the DEBUG environment variable is set
 		logger.level("trace");
 	}
+	else {
+		logger.level("info");
+	}
 
-	logger.info('Setting Simple Data Pipe run log level to ' + logger.level());
+	logger.info('Simple Data Pipe run log level is ' + logger.level());
 
 	var runDoc = this.runDoc = {
 		type : "run",
