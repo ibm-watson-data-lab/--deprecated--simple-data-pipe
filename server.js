@@ -18,15 +18,19 @@ var bluemixHelperConfig = require('bluemix-helper-config');
 var global = bluemixHelperConfig.global;
 var configManager = bluemixHelperConfig.configManager;
 
+var sdpLog = require('./server/logging/sdpLogger.js').getLogger('sdp_common');
+
 var VCAP_APPLICATION = JSON.parse(process.env.VCAP_APPLICATION || "{}");
 var VCAP_SERVICES = JSON.parse(process.env.VCAP_SERVICES || "{}");
 
 var app = global.app = express();
 
+sdpLog.info('Simple Data Pipe is initializing.');
+
 //Enforce https on Bluemix
 app.use( function( req, res, next ){
 	if ( req.headers && req.headers.$wssc === 'http'){
-		console.log("Automatically redirecting to https...");
+		sdpLog.info("Automatically redirecting to https...");
 		return res.redirect('https://' + req.get('host') + req.url);
 	}
 	return next();
@@ -51,7 +55,7 @@ if ('development' === env || 'test' === env) {
 	app.use(errorHandler()); // Error handler - has to be last
 }
 
-var port = process.env.VCAP_APP_PORT || configManager.get("DEV_PORT");
+var port = process.env.VCAP_APP_PORT || configManager.get("DEV_PORT") || 443
 if (!process.env.VCAP_APP_HOST){
 	//Running locally. Salesforce requires authCallbacks to use SSL by default
 	global.appHost = "https://127.0.0.1";
@@ -61,7 +65,7 @@ if (!process.env.VCAP_APP_HOST){
 //Configure security if we are bound to an SSO service
 var ssoService = bluemixHelperConfig.vcapServices.getService( "pipes-sso" );
 if ( ssoService ){
-	console.log("INFO: Security is enabled");
+	sdpLog.info("Security is enabled.");
 	require('bluemix-helper-sso')(app, {
 		ssoService: ssoService,
 		relaxedUrls:[
@@ -94,7 +98,7 @@ require("./server/connectorAPI").initEndPoints(app);	//Pipe connector API
 var wssConfigurator = require("./server/pipeAPI")(app);	//Pipe configuration
 
 var connected = function() {
-	console.log("Pipes Tool started on port %s : %s", port, Date(Date.now()));
+	sdpLog.info('Simple Data Pipe application started on port %s : %s', port, Date(Date.now()));
 };
 
 var options = {

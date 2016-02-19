@@ -11,9 +11,10 @@ var global = require('bluemix-helper-config').global;
 var webSocket = require('ws');
 var webSocketServer = webSocket.Server;
 var _  = require('lodash');
-var pipeRunner = require("./pipeRunner");
-var connectorAPI = require("./connectorAPI");
+var pipeRunner = require('./pipeRunner');
+var connectorAPI = require('./connectorAPI');
 var nodeStatic = require('node-static');
+var sdpLog = require('./logging/sdpLogger.js').getLogger('sdp_common');
 
 module.exports = function( app ){
 	
@@ -42,13 +43,13 @@ module.exports = function( app ){
 	
 	function validatePipePayload( pipe ){
 		var requiredFields = ['name', 'connectorId'];
-		if ( pipe.hasOwnProperty("new") ){
+		if ( pipe.hasOwnProperty('new') ){
 			delete pipe['new'];
 		}else{
 			//Ask the connector for required field
 			var connector = connectorAPI.getConnector( pipe );
 			if ( !connector ){
-				throw new Error("Unable to get connector information for pipe");
+				throw new Error('Unable to get connector information for pipe');
 			}
 			
 			if ( !!connector.getOption('useOAuth') ){
@@ -63,13 +64,13 @@ module.exports = function( app ){
 				}
 				_.forEach( extraReq, function(field){
 					requiredFields.push(field);
-				})
+				});
 			}
 		}
 		
 		requiredFields.forEach( function( field ){
 			if ( !pipe.hasOwnProperty( field ) ){
-				throw new Error("Missing field " + field);
+				throw new Error('Missing field ' + field);
 			}
 		});
 	}
@@ -88,7 +89,7 @@ module.exports = function( app ){
 			if ( err ){
 				return global.jsonError( res, err );
 			}
-			console.log("Pipe successfully saved: " + pipe.name );
+			sdpLog.info('Data Pipe configuration ' + pipe.name + ' was saved.');
 			res.json( pipe );
 		});
 	});
@@ -101,7 +102,7 @@ module.exports = function( app ){
 			if ( err ){
 				return global.jsonError( res, err );
 			}
-			console.log( "Pipe successfully removed : " + JSON.stringify( pipe ) );
+			sdpLog.info('Data Pipe configuration ' + req.params.id + ' was deleted.');
 			res.json( pipe );
 		});
 	});
@@ -109,13 +110,13 @@ module.exports = function( app ){
 	/**
 	 * Returns the last 10 runs
 	 */
-	app.get("/runs", function( req, res ){
+	app.get('/runs', function( req, res ){
 		pipesDb.run( function( err, db ){
-			db.view( 'application', "all_runs", 
+			db.view( 'application', 'all_runs', 
 					{startkey: [{}, req.params.pipeid], endKey:[0, req.params.pipeid],'include_docs':true, 'limit': 10, descending:true},
 				function(err, data) {
 					if ( err ){
-						console.log(err);
+						sdpLog.error('Pipe run list could not be retrieved: ', err);						
 						//No runs yet, return empty array
 						return res.json( [] );
 					}
@@ -128,13 +129,13 @@ module.exports = function( app ){
 	/**
 	 * Returns the last 10 runs for given pipe
 	 */
-	app.get("/runs/:pipeid", function( req, res ){
+	app.get('/runs/:pipeid', function( req, res ){
 		pipesDb.run( function( err, db ){
-			db.view( 'application', "all_runs_for_pipe", 
+			db.view( 'application', 'all_runs_for_pipe', 
 					{key: req.params.pipeid,'include_docs':true, 'limit': 10, descending:true},
 				function(err, data) {
 					if ( err ){
-						console.log(err);
+						sdpLog.error('Pipe run list could not be retrieved for pipe ' + req.params.pipeid + ': ', err);
 						//No runs yet, return empty array
 						return res.json( [] );
 					}
@@ -149,22 +150,22 @@ module.exports = function( app ){
 		if (pipesDb.storageDb && pipesDb.storageDb.config) {
 			storageUrl = pipesDb.storageDb.config.url ? pipesDb.storageDb.config.url : null;
 			if (storageUrl) {
-				if (storageUrl.indexOf("cloudant.com") > -1) {
+				if (storageUrl.indexOf('cloudant.com') > -1) {
 					//cloudant.com
-					storageUrl += "/dashboard.html#/database/{dbname}/_all_docs";
+					storageUrl += '/dashboard.html#/database/{dbname}/_all_docs';
 				}
 				else {
 					//couchdb
-					storageUrl += "/_utils/database.html?{dbname}";
+					storageUrl += '/_utils/database.html?{dbname}';
 				}
 			}
 		}
 		
 		if (storageUrl) {
 			//strip credential from url (e.g., http://username:password@localhost)
-			storageUrl = storageUrl.replace(/:\/\/\S+:\S+@/i,"://");
+			storageUrl = storageUrl.replace(/:\/\/\S+:\S+@/i,'://');
 			var updateRows = _.forEach(rows, function(row, index) {
-				row.doc ? row.doc["dbUrl"] = storageUrl : row["dbUrl"] = storageUrl;
+				row.doc ? row.doc['dbUrl'] = storageUrl : row['dbUrl'] = storageUrl;
 			});
 			return updateRows;
 		}
@@ -183,11 +184,13 @@ module.exports = function( app ){
 			if ( err ){
 				return callback(err);
 			}
-			console.log( "Running pipe using : " + pipe.name );			
+
+			sdpLog.info('Running data pipe ', pipe.name);
 			var doRunInstance = function(){
 				var pipeRunnerInstance = new pipeRunner( pipe );			
 				pipeRunnerInstance.newRun( function( err, pipeRun ){
 					if ( err ){
+						sdpLog.error('Run for Data Pipe ' + pipe.name + ' could not be started: ', err);
 						//Couldn't start the run
 						return callback(err);
 					}
@@ -200,21 +203,21 @@ module.exports = function( app ){
 				pipesDb.getRun( pipe.run, function( err, run ){
 					// i63
 					if ( err || run.status == 'FINISHED' || run.status == 'STOPPED' || run.status == 'ERROR'){
-						console.log("Pipe has a reference to a run that has already completed. OK to proceed...");
+						sdpLog.info('Pipe has a reference to a run that has already completed. OK to proceed...');
 						//Can't find the run or run in a final state; ok to run
 						return doRunInstance();
 					}
 					//Can't create a new run while a run for this pipe is already in progress
-					var message = "A run is already in progress for pipe " + pipe.name;
-					console.log( message );
+					var message = 'A run is already in progress for pipe ' + pipe.name;
+					sdpLog.error(message);
 					return callback( message );
 				});
 			}else{
 				// prevent more than one concurrent pipe run
 				if(global.currentRun) {
 					//Can't create a new run while a run for another pipe is already in progress.
-					var message = "A run is already in progress for another pipe.";
-					console.log( message );
+					var message = 'A run is already in progress for another pipe.';
+					sdpLog.error(message);
 					return callback( message );
 				}
 				else {
@@ -227,21 +230,21 @@ module.exports = function( app ){
 
 	//Default FileServer pointing at the built-in template files
 	var defaultFileServer = new nodeStatic.Server('./app/templates');
-	app.get("/template/:pipeId/:tab", function( req, res ){
+	app.get('/template/:pipeId/:tab', function( req, res ){
 		//Get the connector for this pipeid
 		connectorAPI.getConnectorForPipeId( req.params.pipeId, function( err, connector ){
 			if ( err ){
-				console.log(err);
-				if (req.params.tab !== "settings") {
-					defaultFileServer.serveFile("connectorError.html", 200, {}, req, res);
+				sdpLog.error('Could not find connector for ' + req.params.pipeId + ' : ', err);
+				if (req.params.tab !== 'settings') {
+					defaultFileServer.serveFile('connectorError.html', 200, {}, req, res);
 					return;
 //					return global.jsonError( res, err );
 				}
 			}
 			
-			if (req.params.tab === "settings") {
+			if (req.params.tab === 'settings') {
 				//allow 'settings' page to be served at all times
-				defaultFileServer.serveFile("pipeSettings.html", 200, {}, req, res);
+				defaultFileServer.serveFile('pipeSettings.html', 200, {}, req, res);
 			}
 			else {
 				//The filename to look for (can come from the connector or the default location)
@@ -250,9 +253,9 @@ module.exports = function( app ){
 				//Try the connectorsFileServer first
 				connector.fileServer = connector.fileServer || new nodeStatic.Server( connector.path);
 				connector.fileServer
-					.serveFile( "templates/" + fileName, 200, {}, req, res )
-					.on("error",function(err){
-						//console.log("Not able to serve from connectorsFileServer: " + err );
+					.serveFile( 'templates/' + fileName, 200, {}, req, res )
+					.on('error',function(err){
+						//console.log('Not able to serve from connectorsFileServer: ' + err );
 						defaultFileServer.serveFile(fileName, 200, {}, req,res);
 					 });
 			}
@@ -263,7 +266,7 @@ module.exports = function( app ){
 	 * Start a new pipe run
 	 * @param pipeId: id of the pipe to run
 	 */
-	app.post("/runs/:pipeId", function( req, res ){
+	app.post('/runs/:pipeId', function( req, res ){
 		runPipe( req.params.pipeId, function( err, pipeRunDoc){
 			if ( err ){
 				return global.jsonError( res, err );
@@ -276,14 +279,14 @@ module.exports = function( app ){
 	/**
 	 * Connect to connector data source
 	 */
-	app.get("/connect/:id", function( req, res){
+	app.get('/connect/:id', function( req, res){
 		getPipe( req.params.id, function( err, pipe ){
 			if ( err ){
 				return global.jsonError( res, err );
 			}
 			var connector = connectorAPI.getConnector( pipe );
 			if ( !connector ){
-				return global.jsonError("Unable to get Connector for " + pipe.connectorId );
+				return global.jsonError('Unable to get Connector for ' + pipe.connectorId );
 			}
 			connector.connectDataSource( req, res, pipe._id, req.query.url, function( err, results ){
 				if ( err ){
@@ -299,7 +302,7 @@ module.exports = function( app ){
 	/**
 	 * authCallback: url for OAuth callback
 	 */
-	app.get("/authCallback", function( req, res ){
+	app.get('/authCallback', function( req, res ){
 		var code = req.query.code || req.query.oauth_verifier;
 		var pipeId = null;
 		var state = null;
@@ -316,7 +319,7 @@ module.exports = function( app ){
 		}
 		
 		if ( !code || !pipeId ){
-			return global.jsonError( res, "No code or state specified in OAuth callback request");
+			return global.jsonError( res, 'No code or state specified in OAuth callback request');
 		}
 		
 		getPipe( pipeId, function( err, pipe ){
@@ -325,14 +328,14 @@ module.exports = function( app ){
 			}
 			var connector = connectorAPI.getConnector( pipe );
 			if ( !connector ){
-				return global.jsonError( res, "Unable to find connector for " + pipeId);
+				return global.jsonError( res, 'Unable to find connector for ' + pipeId);
 			}
 			
 			connector.authCallback( code, pipeId, function( err, pipe ){
 				if ( err ){
-					return res.type("html").status(401).send("<html><body>" +
-						"Authentication error: " + err +
-						"</body></html>");
+					return res.type('html').status(401).send('<html><body>' +
+						'Authentication error: ' + err +
+						'</body></html>');
 				}
 				
 				//Save the pipe
@@ -349,34 +352,35 @@ module.exports = function( app ){
 	});
 	
 	//Catch all for uncaught exceptions
-	process.on("uncaughtException", function( err ){
+	process.on('uncaughtException', function( err ){
 		//Something terribly wrong happen within the code, catch it here so we don't crash the app
 		if ( global.currentRun ){
 			// a pipe run was in progress; clean up
-			console.log("Simple Data Pipe: Unexpected exception caught while processing data pipe " + global.currentRun.runDoc.pipeId + ": " + err );
-			console.log(err.stack || "No stack available");
+			sdpLog.error('Simple Data Pipe: Unexpected exception caught while processing data pipe ' + global.currentRun.runDoc.pipeId + ': ', err );
+			// console.log(err.stack || 'No stack available');
 			// the log gets saved in the run doc
 			global.currentRun.done(err);
 		}
 		else {
 			// no pipe run was in progress
-			console.log("Simple Data Pipe: Unexpected exception caught. No pipe run was in progress: " + err );
-			console.log(err.stack || "No stack available");
+			sdpLog.error('Simple Data Pipe: Unexpected exception caught. No pipe run was in progress: ' + err); 
+			sdpLog.error(err.stack || 'No stack available');
 		}	
 
-		if(global.getLogger("pipesRun")) {
-			console.log("Simple Data Pipe run log file is located in " + global.getLogger("pipesRun").logPath);
+		if(global.getLogger('sdp_pipe_run')) {
+			sdpLog.info('Simple Data Pipe run log file is located in ' + global.getLogger('sdp_pipe_run').logPath);
 		}
 
 	});
 	
 	//Listen to scheduled event runs
-	global.on("runScheduledEvent", function( pipeId){
+	global.on('runScheduledEvent', function( pipeId){
 		runPipe( pipeId, function( err, run ){
 			if ( err ){
-				return console.log("Unable to execute a scheduled run for pipe %s", pipeId);
+				sdpLog.error('Unable to execute a scheduled run for pipe ' + pipeId + ': ', err);
+				return;
 			}
-			console.log('New Scheduled run started for pipe %s', pipeId);
+			sdpLog.info('New Scheduled run started for pipe %s', pipeId);
 		});
 	});
 	
@@ -384,10 +388,10 @@ module.exports = function( app ){
 	return function(server){
 		var wss = new webSocketServer({
 			server: server,
-			path:"/runs"
+			path:'/runs'
 		});
 		
-		global.on("runEvent", function( runDoc ){
+		global.on('runEvent', function( runDoc ){
 			_.forEach( wss.clients, function( client ){
 				if ( client.readyState === webSocket.OPEN){
 					client.send( JSON.stringify( runDoc ) );
@@ -400,7 +404,7 @@ module.exports = function( app ){
 			ws.send( global.currentRun && JSON.stringify(global.currentRun.runDoc ));
 
 			ws.on('close', function() {
-				console.log("Web Socket closed");
+				//console.log('Web Socket closed');
 			});
 		});
 	};
