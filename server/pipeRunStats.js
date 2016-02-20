@@ -6,9 +6,10 @@
 */
 
 var moment = require('moment');
-var sdpLog = require('./logging/sdpLogger.js').getLogger('sdp_common');
+//var sdpLog = require('./logging/sdpLogger.js').getLogger('sdp_common');
 var pipesSDK = require('simple-data-pipe-sdk');
 var pipesDb = pipesSDK.pipesDb;
+var sdpLog = pipesSDK.logging.getLogger('sdp_common');
 var _ = require('lodash');
 var bluemixHelperConfig = require('bluemix-helper-config');
 var global = bluemixHelperConfig.global;

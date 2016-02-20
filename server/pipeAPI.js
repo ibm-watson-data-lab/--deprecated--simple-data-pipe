@@ -14,7 +14,8 @@ var _  = require('lodash');
 var pipeRunner = require('./pipeRunner');
 var connectorAPI = require('./connectorAPI');
 var nodeStatic = require('node-static');
-var sdpLog = require('./logging/sdpLogger.js').getLogger('sdp_common');
+//var sdpLog = require('./logging/sdpLogger.js').getLogger('sdp_common');
+var sdpLog = pipesSDK.logging.getLogger('sdp_common');
 
 module.exports = function( app ){
 	
