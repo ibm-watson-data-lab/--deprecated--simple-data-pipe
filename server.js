@@ -18,7 +18,8 @@ var bluemixHelperConfig = require('bluemix-helper-config');
 var global = bluemixHelperConfig.global;
 var configManager = bluemixHelperConfig.configManager;
 
-var sdpLog = require('./server/logging/sdpLogger.js').getLogger('sdp_common');
+var sdpLog = require('simple-data-pipe-sdk').logging.getLogger('sdp_common');
+//var sdpLog = require('./server/logging/sdpLogger.js').getLogger('sdp_common');
 
 var VCAP_APPLICATION = JSON.parse(process.env.VCAP_APPLICATION || "{}");
 var VCAP_SERVICES = JSON.parse(process.env.VCAP_SERVICES || "{}");

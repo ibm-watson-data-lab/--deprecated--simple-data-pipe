@@ -6,7 +6,8 @@
 */
 
 var fs = require('fs');
-var sdpLog = require('./logging/sdpLogger.js').getLogger('sdp_common');
+//var sdpLog = require('./logging/sdpLogger.js').getLogger('sdp_common');
+var sdpLog = require('simple-data-pipe-sdk').logging.getLogger('sdp_common');
 var bluemixHelperConfig = require('bluemix-helper-config');
 var configManager = bluemixHelperConfig.configManager;
 var vcapServices = bluemixHelperConfig.vcapServices;

@@ -10,7 +10,8 @@ var cloudant = pipesSDK.cloudant;
 var _ = require('lodash');
 var async = require('async');
 var connectorAPI = require('./connectorAPI');
-var sdpLog = require('./logging/sdpLogger.js').getLogger('sdp_common');
+//var sdpLog = require('./logging/sdpLogger.js').getLogger('sdp_common');
+var sdpLog = pipesSDK.logging.getLogger('sdp_common');
 
 function pipeRunner( pipe ){
 	this.pipe = pipe;
