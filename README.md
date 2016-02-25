@@ -19,7 +19,7 @@ If you:
 <ul>
 <li><strong>don't have a Bluemix account</strong>,  you'll be prompted to <a href="http://www.ibm.com/cloud-computing/bluemix/" target="_blank">sign up</a>.  Create your account, verify your email address, then return here and click the the <strong>Deploy to Bluemix</strong> button again. </li>
 <li><strong>have trouble deploying</strong>, make sure you haven't already reached your Bluemix memory and services quotas. You get 10 services with your account's free trial period. If you have questions about working in Bluemix, find answers in the <a href="https://www.ng.bluemix.net/docs/" target="_blank">Bluemix Docs</a>.</li>
-</ul>.
+</ul>
 
 ### Configuring Cloud Foundry
 
