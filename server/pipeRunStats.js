@@ -31,7 +31,10 @@ function pipeRunStats(pipe, steps, callback){
 		logger.level('info');
 	}
 
-	sdpLog.info('Simple Data Pipe run log level for pipe ' + pipe._id + ' is ' + logger.level());
+	// counts the number of pending run doc updates that have not yet been stored in the repository
+	var runDocSavesInProgress = 0;
+
+	sdpLog.info('Simple Data Pipe run log level for ' + pipe.connectorId + ' pipe ' + pipe.name + '(' + pipe._id + ') is ' + logger.level());
 
 	var runDoc = this.runDoc = {
 		type : 'run',
@@ -56,8 +59,16 @@ function pipeRunStats(pipe, steps, callback){
 	}
 	
 	var save = this.save = function(callback, outerError){
+
+		//sdpLog.debug('Saving run document for pipe ' + pipe._id);
+
+		runDocSavesInProgress++;
+
 		//Create a new run doc and associate it with this pipe
 		pipesDb.saveRun( pipe, runDoc, function( err, runDocument ){
+
+			runDocSavesInProgress--;
+
 			if ( err ){
 				sdpLog.error('Run information for pipe ' + pipe._id + ' could not be saved: ', err);
 				return callback && callback( err );
@@ -84,6 +95,7 @@ function pipeRunStats(pipe, steps, callback){
 	this.getPipe = function(){
 		return this.pipe;
 	};
+
 	
 	this.setMessage = function( message ){
 		runDoc.message = message || '';
@@ -193,12 +205,64 @@ function pipeRunStats(pipe, steps, callback){
 				runDoc: runDoc
 			});
 			
-			//Save the log file as an attachment to the run
-			pipesDb.attachLogFileToRun( logger.logPath, runDoc, function(err){
-				if ( err ){
-					sdpLog.error('Unable to attach log file %s to run document %s : %s', logger.logPath, runDoc._id, err );
-				}				
-			});
+			/*
+			 * Wait until all run document updates have been saved before trying to attach the run log file.
+			 * Maximum wait time is stopWaitCounter * sleepInterval (~10 minutes)
+			 * 
+			 */
+			var stopWaitCounter = 60 * 10;  // wait is aborted if this counter reaches 0
+			var sleepInterval = 1000;		// wake-up every sleepInterval in ms
+
+			var updateAfterAllSavesComplete = 	
+			    setInterval( function(){
+			    						stopWaitCounter--;
+
+			    						// runDocSavesInProgress counter is updated by the save() function, which updates the run document
+										if(runDocSavesInProgress < 1)	{
+											// all run document updates were saved; stop waiting
+											clearInterval(updateAfterAllSavesComplete);	
+
+											// attach run log file to run document in Cloudant repository
+											pipesDb.attachLogFileToRun( logger.logPath, 
+																		runDoc, 
+																		function(err){
+																			if ( err ){
+																				sdpLog.error('Unable to attach log file %s to run document %s: %s', 
+																					         logger.logPath, runDoc._id, err );
+																			}
+																			else {
+																				sdpLog.info('Attached log file %s to run document %s.',
+																			         		logger.logPath, runDoc._id);
+																			}
+																		});
+										}
+										else {
+											// there are still run document updates pending
+											if(stopWaitCounter < 1) {
+												// stop waiting; no attempt will be made to attach the log file
+												clearInterval(updateAfterAllSavesComplete);	
+												// log error condition
+												sdpLog.error('There are too many run document updates pending. The run log file %s will not be attached to the run document %s.', 
+															 logger.logPath, runDoc._id);
+											}
+											else {
+												// issue informational message every (sleepInterval * 5) ms
+												if(stopWaitCounter % 5 === 0) {
+													sdpLog.info('Waiting for remaining ' + runDocSavesInProgress + ' run doc updates to be saved.');	
+												}
+											}
+										}
+				}, sleepInterval); 
+
+
+			/*    
+				//Save the log file as an attachment to the run
+				pipesDb.attachLogFileToRun( logger.logPath, runDoc, function(err){
+					if ( err ){
+						sdpLog.error('Unable to attach log file %s to run document %s : %s', logger.logPath, runDoc._id, err );
+					}				
+				});
+			*/
 		});
 		
 		broadcastRunEvent();
