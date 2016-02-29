@@ -56,7 +56,7 @@ if ('development' === env || 'test' === env) {
 	app.use(errorHandler()); // Error handler - has to be last
 }
 
-var port = process.env.VCAP_APP_PORT || configManager.get("DEV_PORT") || 443
+var port = process.env.VCAP_APP_PORT || configManager.get("DEV_PORT") || 8082;
 if (!process.env.VCAP_APP_HOST){
 	//Running locally. Salesforce requires authCallbacks to use SSL by default
 	global.appHost = "https://127.0.0.1";
