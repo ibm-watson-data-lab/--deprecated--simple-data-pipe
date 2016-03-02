@@ -8,9 +8,9 @@
 
 <section class="layout_section" ng-show="!isPipeRunning() && !runningAnchor">
 
-	<p class="type_copy">
-		Status information and details about your pipe runs.
-	</p>
+    <p class="type_copy">
+        Status information and details about your pipe runs.
+    </p>
     
     <div class="button_group">
         <button type="button" class="button_primary"
@@ -20,9 +20,9 @@
     </div>
     
     <div class="form_container">
-    	<div class="type_subhead">
-    		<mark class="type_mark"><span class="ellipsize">{{ allPipesSelected ? 'All Pipes' : selectedPipe.name }}</span> Activity</mark>
-    	</div>
+        <div class="type_subhead">
+            <mark class="type_mark"><span class="ellipsize">{{ allPipesSelected ? 'All Pipes' : selectedPipe.name }}</span> Activity</mark>
+        </div>
         
         <select class="input_select input_narrow" id="pipe-type" name="type" ng-init="theselectedpipes = 'current'"
             ng-show="pipeslist && pipeslist.length > 1" ng-model="theselectedpipes"
@@ -37,52 +37,58 @@
     </p>
 
     <div class="table_container">
-    	<table class="table_basic" ng-show="runs && runs.length > 0">
-    		<thead>
-    			<tr>
-    				<th>Date/Time</th>
-    				<th ng-if="allPipesSelected">Pipe</th>
-    				<th><span class="piperecord">Records Processed</span></th>
-    				<th>Run Time</th>
-    				<th>Message</th>
-    				<th>Detail</th>
-    			</tr>
-    		</thead>
-    		<tbody>
-    			<tr ng-repeat="run in runs | sortBy:'startTimeUTC':true" ng-class="{'ERROR':'danger', 'RUNNING':'info', 'FINISHED':'success'}[run.status]"
-    				class="{{run.startTime == activeRun.startTime && run.pipeId == activeRun.pipeId && 'selectedRunDetail'+run.status || ''}}">
-    				<td>{{run.startTime}}</td>
-    				<td ng-if="name=getPipeName(run);allPipesSelected" class="pipename">
-    					<span ng-if="name" class="ellipsize">{{name}}</span>
-    					<span ng-if="!name" class="pipenotfound">Pipe no longer exists</span>
-    				</td>
-    				<td><span class="piperecord">{{run.numRecords | number}}</span></td>
-    				<td>{{run.elapsedTime}}</td>
-    				<td>{{run.message}}</td>
-    				<td>
-    					<a class="type_link" ng-click="activateRun(run)">
-    						Details
-    					</a>
-    				</td>
-    			</tr>
-    		</tbody>
-    	</table>
+        <table class="table_basic" ng-show="runs && runs.length > 0">
+            <thead>
+                <tr>
+                    <th>Date/Time</th>
+                    <th ng-if="allPipesSelected">Pipe</th>
+                    <th><span class="piperecord">Records Processed</span></th>
+                    <th>Run Time</th>
+                    <th>Message</th>
+                    <th>Detail</th>
+                    <th>Log</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="run in runs | sortBy:'startTimeUTC':true" ng-class="{'ERROR':'danger', 'RUNNING':'info', 'FINISHED':'success'}[run.status]"
+                    class="{{run.startTime == activeRun.startTime && run.pipeId == activeRun.pipeId && 'selectedRunDetail'+run.status || ''}}">
+                    <td>{{run.startTime}}</td>
+                    <td ng-if="name=getPipeName(run);allPipesSelected" class="pipename">
+                        <span ng-if="name" class="ellipsize">{{name}}</span>
+                        <span ng-if="!name" class="pipenotfound">Pipe no longer exists</span>
+                    </td>
+                    <td><span class="piperecord">{{run.numRecords | number}}</span></td>
+                    <td>{{run.elapsedTime}}</td>
+                    <td>{{run.message}}</td>
+                    <td>
+                        <a class="type_link" ng-click="activateRun(run)">
+                            Details
+                        </a>
+                    </td>
+                    <td>
+                        <a class="type_link" href="{{run.logUrl}}" ng-if="run.logUrl" target="_blank">
+                            View log
+                        </a>
+                    </td>                    
+                </tr>
+            </tbody>
+        </table>
     </div>
 
-	<div ng-show="activeRun" ng-class="{'ERROR':'panel-danger', 'RUNNING':'panel-info', 'FINISHED':'panel-success'}[activeRun.status]">
+    <div ng-show="activeRun" ng-class="{'ERROR':'panel-danger', 'RUNNING':'panel-info', 'FINISHED':'panel-success'}[activeRun.status]">
       <hr>
       
       <h1 class="type_subhead"><mark class="type_mark">Pipe Run Details</mark></h1>
       
       <div class="table_container">
         <table class="table_basic">
-    		<thead>
-    			<th>Data Set</th>
-    			<th><span class="piperecord">Records</span></th>
-    			<th>Status</th>
-    		</thead>
-    		<tbody>
-    			<tr ng-repeat="stat in activeRun.tableStats | sortBy:'tableName'">
+            <thead>
+                <th>Data Set</th>
+                <th><span class="piperecord">Records</span></th>
+                <th>Status</th>
+            </thead>
+            <tbody>
+                <tr ng-repeat="stat in activeRun.tableStats | sortBy:'tableName'">
                     <td>
                         <a class="type_link" ng-show="activeRun.dbUrl" href="{{activeRun.dbUrl.replace('{dbname}', stat.dbName)}}" target="_blank">{{stat.tableName}}</a>
                         <span ng-show="!activeRun.dbUrl">{{stat.tableName}}</span>
@@ -90,10 +96,10 @@
                     <td><span class="piperecord">{{stat.numRecords | number}}</span></td>
                     <td>{{stat.errors[0].message}}</td>
                   </tr>
-    		</tbody>
-	   </table>
+            </tbody>
+       </table>
      </div>
-	</div>
+    </div>
 
 </section>
 
