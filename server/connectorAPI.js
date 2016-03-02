@@ -154,13 +154,13 @@ function connectorAPI(){
 									// load connector
 									var connector = loadConnector( module.path );
 									if ( connector ){						
-										sdpLog.info('Loaded npm dependency connector ', connector.getId());
+										sdpLog.info('Connector ' + module.simple_data_pipe.name + ' version ' + module.version + ' was loaded.');
 										connectors.push( connector );
 										service.loaded = true;
 									}
 								}
 								else {
-									sdpLog.error('Connector ' + module.simple_data_pipe.name + ' was not loaded due to missing service dependencies.');
+									sdpLog.error('Connector ' + module.simple_data_pipe.name + ' version ' + module.version + ' was not loaded due to missing service dependencies.');
 								}							
 
 								declared_connectors.push(service);
