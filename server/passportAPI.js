@@ -19,18 +19,23 @@ var passportAPI = {
 	},
 
 	initEndPoints: function(app) {
-		app.get('/auth/passport/:pipeid',
+		//callback during passport authentication
+		app.get('/auth/passport/callback',
 			function(req, res, next) {
-				passport.authenticate(req.params.pipeid, { 
-					pipeId:req.params.pipeid,
-					callbackURL: global.getHostUrl() + "/auth/passport/" + req.params.pipeid + "/callback"
-				})(req, res, next);
-			}
-		);
-		
-		app.get('/auth/passport/:pipeid/callback',
-			function(req, res, next) {
-				passport.authenticate(req.params.pipeid, { pipeId:req.params.pipeid }, function(err, user, info) {
+				var pipeId = null;
+				
+				if (req.query.pipeId) {
+					pipeId = req.query.pipeId;
+				}
+				else if (req.session && req.session.pipeId) {
+					pipeId = req.session.pipeId;
+				}
+				
+				if ( !pipeId ){
+					return global.jsonError( res, 'No code or state specified in /auth/passport/callback request');
+				}
+				
+				passport.authenticate(pipeId, { pipeId:pipeId }, function(err, user, info) {
 					if (err) {
 						return next(err);
 					}
@@ -72,6 +77,17 @@ var passportAPI = {
 							}, info);
 						});
 					}
+				})(req, res, next);
+			}
+		);
+
+		//initiate passport authentication
+		app.get('/auth/passport/:pipeid',
+			function(req, res, next) {
+				req.session.pipeId = req.params.pipeid;
+				passport.authenticate(req.params.pipeid, { 
+					pipeId:req.params.pipeid,
+					callbackURL: global.getHostUrl() + "/auth/passport/callback"
 				})(req, res, next);
 			}
 		);
