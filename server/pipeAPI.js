@@ -13,11 +13,15 @@ var webSocketServer = webSocket.Server;
 var _  = require('lodash');
 var pipeRunner = require('./pipeRunner');
 var connectorAPI = require('./connectorAPI');
+var passportAPI = require("./passportAPI");
 var nodeStatic = require('node-static');
 //var sdpLog = require('./logging/sdpLogger.js').getLogger('sdp_common');
 var sdpLog = pipesSDK.logging.getLogger('sdp_common');
 
 module.exports = function( app ){
+
+	//Configure passport
+	passportAPI.initEndPoints(app);
 	
 	//Private APIs
 	var getPipe = function( pipeId, callback, noFilterForOutbound ){
@@ -103,6 +107,7 @@ module.exports = function( app ){
 			if ( err ){
 				return global.jsonError( res, err );
 			}
+			passportAPI.removeStrategy(pipe._id);
 			sdpLog.info('Data Pipe configuration ' + req.params.id + ' was deleted.');
 			res.json( pipe );
 		});
@@ -317,14 +322,31 @@ module.exports = function( app ){
 			if ( !connector ){
 				return global.jsonError('Unable to get Connector for ' + pipe.connectorId );
 			}
-			connector.connectDataSource( req, res, pipe._id, req.query.url, function( err, results ){
-				if ( err ){
-					return global.jsonError( res, err );
+			
+			var passportStrategy = null;
+			if (typeof connector.getPassportStrategy === "function") {
+				passportStrategy = connector.getPassportStrategy(pipe);
+			}
+			
+			if (passportStrategy) {
+				//use Passport to handle authentication
+				passportAPI.addStrategy(pipe._id, passportStrategy);
+				
+				if (req.session) {
+					req.session.returnUrl = req.query.url;
 				}
-				if ( !res.headersSent ){
+				var passportAuthUrl = "/auth/passport/" + pipe._id;
+				res.redirect(passportAuthUrl);
+			}
+			else {
+				//connector will handle authentication
+				connector.connectDataSource( req, res, pipe._id, req.query.url, function( err, results ){
+					if ( err ){
+						return global.jsonError( res, err );
+					}
 					return res.json( results );
-				}
-			});
+				});
+			}
 		});
 	});
 	

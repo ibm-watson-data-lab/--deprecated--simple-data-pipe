@@ -1,6 +1,6 @@
 {
   "name": "simple-data-pipe",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Tool for loading cloud data (e.g. from salesforce) into Cloudant.",
   "main": "server.js",
   "scripts": {
