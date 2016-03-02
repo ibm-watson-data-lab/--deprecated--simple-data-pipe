@@ -158,6 +158,9 @@ function connectorAPI(){
 										connectors.push( connector );
 										service.loaded = true;
 									}
+									else {
+										sdpLog.error('Connector ' + module.simple_data_pipe.name + ' version ' + module.version + ' could not be loaded.');
+									}
 								}
 								else {
 									sdpLog.error('Connector ' + module.simple_data_pipe.name + ' version ' + module.version + ' was not loaded due to missing service dependencies.');
