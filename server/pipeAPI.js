@@ -146,11 +146,29 @@ module.exports = function( app ){
 		});
 	});
 	
+	/*
+	 * @param rows - a set of pipe run documents
+	 */
 	var injectDbUrl = function(rows) {
-		var storageUrl = null;
+
+		var baseUrl = null;
+		var storageUrl = null; // Cloudant staging database URL 
+		var logUrl = null;     // Data Pipe run log download URL
+
 		if (pipesDb.storageDb && pipesDb.storageDb.config) {
-			storageUrl = pipesDb.storageDb.config.url ? pipesDb.storageDb.config.url : null;
-			if (storageUrl) {
+
+			baseUrl = pipesDb.storageDb.config.url ? pipesDb.storageDb.config.url : null;
+			
+			if (baseUrl) {
+				//strip credential from url (e.g., http://username:password@localhost)
+				baseUrl = baseUrl.replace(/:\/\/\S+:\S+@/i,'://');
+
+				storageUrl = baseUrl;
+
+				// compose run log URL string (same format used by Couch and Cloudant)
+				// $BASE_URL/$DATABASE/$DOCUMENT_ID/$ATTACHMENT_NAME
+				logUrl = baseUrl + '/' + pipesDb.storageDb.config.db + '/'; // /$DATABASE/
+
 				if (storageUrl.indexOf('cloudant.com') > -1) {
 					//cloudant.com
 					storageUrl += '/dashboard.html#/database/{dbname}/_all_docs';
@@ -163,10 +181,20 @@ module.exports = function( app ){
 		}
 		
 		if (storageUrl) {
-			//strip credential from url (e.g., http://username:password@localhost)
-			storageUrl = storageUrl.replace(/:\/\/\S+:\S+@/i,'://');
+
+			var docProperty = null;
+
 			var updateRows = _.forEach(rows, function(row, index) {
-				row.doc ? row.doc['dbUrl'] = storageUrl : row['dbUrl'] = storageUrl;
+				docProperty = row.doc || row;
+
+				// add link to storage database to run document
+				docProperty.dbUrl = storageUrl;
+
+				// if a run log is attached to the run doc, add the logUrl property, which can be used by the UI to display a download link
+				if((docProperty['_attachments']) && (docProperty['_attachments']['run.log'])) {
+					docProperty.logUrl = logUrl + row.id + '/run.log' ;	// append $DOCUMENT_ID/$LOG_FILE_ATTACHMENT_NAME 					
+				}
+				
 			});
 			return updateRows;
 		}
