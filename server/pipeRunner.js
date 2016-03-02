@@ -7,9 +7,11 @@
 
 var pipesSDK = require('simple-data-pipe-sdk');
 var cloudant = pipesSDK.cloudant;
-var _ = require("lodash");
-var async = require("async");
-var connectorAPI = require("./connectorAPI");
+var _ = require('lodash');
+var async = require('async');
+var connectorAPI = require('./connectorAPI');
+//var sdpLog = require('./logging/sdpLogger.js').getLogger('sdp_common');
+var sdpLog = pipesSDK.logging.getLogger('sdp_common');
 
 function pipeRunner( pipe ){
 	this.pipe = pipe;
@@ -17,7 +19,7 @@ function pipeRunner( pipe ){
 	//Private APIs
 	var validate = function(){
 		if ( !this.pipe.tables ){
-			return "Cannot run because pipe is not connected";
+			return 'Cannot run because pipe is not connected';
 		}
 	}.bind( this );	
 	
@@ -25,7 +27,7 @@ function pipeRunner( pipe ){
 		//Get the steps from the connector associated with this pipe
 		var connector = connectorAPI.getConnector( pipe );
 		if ( !connector ){
-			console.log("Can't find connector %s", pipe.connectorId );
+			sdpLog.error('Cannot find connector %s', pipe.connectorId );
 			return [];
 		}
 		return connector.getSteps();
@@ -34,18 +36,20 @@ function pipeRunner( pipe ){
 	var runStarted = function(readyCallback){
 		var connector = connectorAPI.getConnector( pipe );
 		if ( !connector ){
-			return console.log("Can't find connector %s", pipe.connectorId );
+			sdpLog.error('Cannot find connector %s', pipe.connectorId );
+			return;
 		}
 		return connector.runStarted(readyCallback, pipe);
-	}
+	};
 	
 	var runFinished = function(){
 		var connector = connectorAPI.getConnector( pipe );
 		if ( !connector ){
-			return console.log("Can't find connector %s", pipe.connectorId );
+			sdpLog.error('Cannot find connector %s', pipe.connectorId );
+			return;
 		}
 		return connector.runFinished(pipe);
-	}
+	};
 	
 	//Public APIs
 	/**
@@ -79,7 +83,7 @@ function pipeRunner( pipe ){
 		}
 
 		var steps = getSteps();
-		var pipeRunStats = new (require("./pipeRunStats"))( pipe, steps, function(err){
+		var pipeRunStats = new (require('./pipeRunStats'))( pipe, steps, function(err){
 			if ( err ){
 				return callback(err);
 			}
@@ -103,8 +107,8 @@ function pipeRunner( pipe ){
 							});
 						}catch(e){
 							//Error caught
-							logger.error("Exception caught: " + e);
-							logger.error("Stack: " + e.stack);
+							logger.error('Exception caught: ' + e);
+							logger.error('Stack: ' + e.stack);
 							step.endStep( callback, e );
 						}
 					}.bind(this), function( err ){

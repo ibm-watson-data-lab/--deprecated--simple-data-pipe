@@ -46,6 +46,7 @@
     				<th>Run Time</th>
     				<th>Message</th>
     				<th>Detail</th>
+                    <th>Log</th>
     			</tr>
     		</thead>
     		<tbody>
@@ -64,6 +65,11 @@
     						Details
     					</a>
     				</td>
+                    <td>
+                        <a class="type_link" href="{{run.logUrl}}" ng-if="run.logUrl" target="_blank">
+                            View log
+                        </a>
+                    </td>                      
     			</tr>
     		</tbody>
     	</table>
@@ -77,7 +83,7 @@
       <div class="table_container">
         <table class="table_basic">
     		<thead>
-    			<th>Table Name</th>
+    			<th>Data Set</th>
     			<th><span class="piperecord">Records</span></th>
     			<th>Status</th>
     		</thead>

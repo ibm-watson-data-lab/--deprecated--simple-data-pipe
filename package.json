@@ -1,6 +1,6 @@
 {
   "name": "simple-data-pipe",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Tool for loading cloud data (e.g. from salesforce) into Cloudant.",
   "main": "server.js",
   "scripts": {
@@ -45,9 +45,10 @@
     "npm": "^3.5.0",
     "oauth": "0.9.10",
     "passport": "~0.2.2",
-    "simple-data-pipe-sdk": "^0.2.0",
-    "simple-data-pipe-connector-stripe": "git://github.com/ibm-cds-labs/simple-data-pipe-connector-stripe.git",
+    "simple-data-pipe-sdk": "^0.2.3",
     "simple-data-pipe-connector-salesforce": "git://github.com/ibm-cds-labs/simple-data-pipe-connector-salesforce.git",
+    "simple-data-pipe-connector-stripe": "git://github.com/ibm-cds-labs/simple-data-pipe-connector-stripe.git",
+    "bunyan-console-stream": "^0.1.0",
     "request": "~2.58.0",
     "when": "~3.7.3",
     "ws": "~0.7.2"
