@@ -5,7 +5,9 @@ var passport = require("passport");
 var global = require('bluemix-helper-config').global;
 var pipesSDK = require('simple-data-pipe-sdk');
 var pipesDb = pipesSDK.pipesDb;
+var sdpLog = pipesSDK.logging.getLogger('sdp_common');
 var connectorAPI = require("./connectorAPI");
+var util = require('util');
 
 
 var passportAPI = {
@@ -36,6 +38,11 @@ var passportAPI = {
 				}
 				
 				passport.authenticate(pipeId, { pipeId:pipeId }, function(err, user, info) {
+
+					sdpLog.debug('Passport callback - err: ' + util.inspect(err));
+					sdpLog.debug('Passport callback - user: ' + util.inspect(user));
+					sdpLog.debug('Passport callback - info: ' + util.inspect(info));
+
 					if (err) {
 						return next(err);
 					}
