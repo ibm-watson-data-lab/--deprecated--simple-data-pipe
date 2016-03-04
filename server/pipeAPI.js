@@ -382,7 +382,7 @@ module.exports = function( app ){
 				return global.jsonError( res, 'Unable to find connector for ' + pipeId);
 			}
 			
-			connector.authCallback( code, pipeId, function( err, pipe ){
+			connector.authCallback( code, pipe, function( err, pipe ){
 				if ( err ){
 					return res.type('html').status(401).send('<html><body>' +
 						'Authentication error: ' + err +

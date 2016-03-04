@@ -21,13 +21,18 @@ var passportAPI = {
 	},
 
 	initEndPoints: function(app) {
+
 		//callback during passport authentication
 		app.get('/auth/passport/callback',
 			function(req, res, next) {
+
+				sdpLog.debug('/auth/passport/callback invoked - req: ' + req);
+
 				var pipeId = null;
 				
-				if (req.query.pipeId) {
-					pipeId = req.query.pipeId;
+				// OAuth provider returns state parameter, which was set in /auth/passport/:pipeid
+				if (req.query.state) {
+					pipeId = req.query.state;
 				}
 				else if (req.session && req.session.pipeId) {
 					pipeId = req.session.pipeId;
@@ -50,6 +55,18 @@ var passportAPI = {
 						res.type("html").status(401).send("<html><body> Authentication error: " + err + " </body></html>");
 					}
 					else {
+
+						if (!info) {
+							info = {};
+						}
+
+						if(!info.pipeId) {
+							info.pipeId = pipeId;
+						}
+						if(!info.oauth_access_token) {
+							info.oauth_access_token = user.oauth_access_token;
+						}
+
 						pipesDb.getPipe( info.pipeId, function( err, pipe ) {
 							if ( err ){
 								return global.jsonError( res, err );
@@ -61,7 +78,9 @@ var passportAPI = {
 								return global.jsonError( res, "Unable to find connector for " + pipeId)
 							}
 							
-							connector.authCallback( info.oauth_access_token, info.pipeId, function( err, pipe ){
+							// pass pipe instead of pipe id
+							connector.authCallback( info.oauth_access_token, pipe, function( err, pipe ){
+							// PTITZLER connector.authCallback( info.oauth_access_token, info.pipeId, function( err, pipe ){
 								if ( err ){
 									return res.type("html").status(401).send("<html><body>" +
 										"Authentication error: " + err +
@@ -93,8 +112,8 @@ var passportAPI = {
 			function(req, res, next) {
 				req.session.pipeId = req.params.pipeid;
 				passport.authenticate(req.params.pipeid, { 
-					pipeId:req.params.pipeid,
-					callbackURL: global.getHostUrl() + "/auth/passport/callback"
+					state:req.params.pipeid // pass the pipe id as state parameter
+					// duration:'permanent'     // test only
 				})(req, res, next);
 			}
 		);
