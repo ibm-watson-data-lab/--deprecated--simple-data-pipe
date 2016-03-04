@@ -66,6 +66,10 @@ var passportAPI = {
 						if(!info.oauth_access_token) {
 							info.oauth_access_token = user.oauth_access_token;
 						}
+						if(!info.oauth_refresh_token) {
+							info.oauth_refresh_token = user.oauth_refresh_token;
+						}
+
 
 						pipesDb.getPipe( info.pipeId, function( err, pipe ) {
 							if ( err ){
@@ -79,7 +83,7 @@ var passportAPI = {
 							}
 							
 							// pass pipe instead of pipe id
-							connector.authCallback( info.oauth_access_token, pipe, function( err, pipe ){
+							connector.authCallback( info, pipe, function( err, pipe ){
 							// PTITZLER connector.authCallback( info.oauth_access_token, info.pipeId, function( err, pipe ){
 								if ( err ){
 									return res.type("html").status(401).send("<html><body>" +
