@@ -83,8 +83,7 @@ var passportAPI = {
 							}
 							
 							// pass pipe instead of pipe id
-							connector.authCallback( info, pipe, function( err, pipe ){
-							// PTITZLER connector.authCallback( info.oauth_access_token, info.pipeId, function( err, pipe ){
+							connector.passportAuthCallbackPostProcessing( info, pipe, function( err, pipe ){
 								if ( err ){
 									return res.type("html").status(401).send("<html><body>" +
 										"Authentication error: " + err +
