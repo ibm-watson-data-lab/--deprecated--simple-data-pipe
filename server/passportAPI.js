@@ -1,47 +1,67 @@
 
 'use strict';
 
-var passport = require("passport");
+var passport = require('passport');
 var global = require('bluemix-helper-config').global;
 var pipesSDK = require('simple-data-pipe-sdk');
 var pipesDb = pipesSDK.pipesDb;
 var sdpLog = pipesSDK.logging.getLogger('sdp_common');
-var connectorAPI = require("./connectorAPI");
+var connectorAPI = require('./connectorAPI');
 var util = require('util');
 
 
 var passportAPI = {
 	
+	/**
+	  * Add a configured passport strategy.
+	  * @param {string} unique strategy name
+	  * @param {Object} passport strategy
+	  */
 	addStrategy: function(name, strategy) {
 		passport.use(name, strategy);
 	},
 	
+	/**
+	  * Remove passport strategy.
+	  * @param {string} unique strategy name
+	  */
 	removeStrategy: function(name) {
 		passport.unuse(name);
 	},
 
-	initEndPoints: function(app) {
+	/**
+	  * OAuth callback processing for passport. The request must include
+	  * a state parameter containing the data pipe id for which OAuth processing
+	  * is performed.
+	  * @param {Object} req - request
+	  * @param {Object} res - response
+	  * @param {Object} next - next handler
+	  *
+	  */
+	authCallback: function(req, res, next) {
 
-		//callback during passport authentication
-		app.get('/auth/passport/callback',
-			function(req, res, next) {
+				sdpLog.info('Starting Passport OAuth callback processing.');
 
-				sdpLog.debug('/auth/passport/callback invoked - req: ' + req);
-
-				var pipeId = null;
+				var state = null,
+				    pipeId = null;
 				
-				// OAuth provider returns state parameter, which was set in /auth/passport/:pipeid
 				if (req.query.state) {
-					pipeId = req.query.state;
+					state = JSON.parse(req.query.state);
 				}
-				else if (req.session && req.session.pipeId) {
-					pipeId = req.session.pipeId;
+				else if (req.session && req.session.state) {
+					state = JSON.parse(req.session.state);
+				}
+				
+				if (state) {
+					pipeId = state.pipe;
 				}
 				
 				if ( !pipeId ){
-					return global.jsonError( res, 'No code or state specified in /auth/passport/callback request');
+					sdpLog.error('Passport OAuth callback - data pipe id is missing');
+					return global.jsonError( res, 'Passport OAuth callback - data pipe id is missing.');
 				}
 				
+				// delegate OAuth callback processing to passport
 				passport.authenticate(pipeId, { pipeId:pipeId }, function(err, user, info) {
 
 					sdpLog.debug('Passport callback - err: ' + util.inspect(err));
@@ -49,50 +69,53 @@ var passportAPI = {
 					sdpLog.debug('Passport callback - info: ' + util.inspect(info));
 
 					if (err) {
+						// fatal authentication error
+						sdpLog.error('Passport OAuth callback - authentication failed: ' + err);
 						return next(err);
 					}
 					else if (!user) {
-						res.type("html").status(401).send("<html><body> Authentication error: " + err + " </body></html>");
+						// fatal authentication error; no user profile was returned
+						sdpLog.error('Passport OAuth callback - no user profile was returned.');
+						res.type('html').status(401).send('<html><body> The user is not known to the data source. </body></html>');
 					}
 					else {
 
-						if (!info) {
-							info = {};
+						// create 
+						if (info) {
+							user.info = info;
 						}
 
-						if(!info.pipeId) {
-							info.pipeId = pipeId;
-						}
-						if(!info.oauth_access_token) {
-							info.oauth_access_token = user.oauth_access_token;
-						}
-						if(!info.oauth_refresh_token) {
-							info.oauth_refresh_token = user.oauth_refresh_token;
-						}
-
-
-						pipesDb.getPipe( info.pipeId, function( err, pipe ) {
+						// fetch the data pipe configuration
+						pipesDb.getPipe( pipeId, function( err, pipe ) {
 							if ( err ){
+								sdpLog.error('Passport OAuth callback - retrieval of data pipe configuration ' + pipeId + ' failed: ' + err);
 								return global.jsonError( res, err );
 							}
 							
+							// determine which connector can process this data pipe
 							var connector = connectorAPI.getConnector( pipe );
 							
 							if ( !connector ){
-								return global.jsonError( res, "Unable to find connector for " + pipeId)
+								// no connector can process this data pipe configuration
+								sdpLog.error('Passport OAuth callback - no connector is configured for pipe ' + pipeId + '.');
+								return global.jsonError( res, 'Unable to find connector for data pipe ' + pipeId);
 							}
 							
-							// pass pipe instead of pipe id
-							connector.passportAuthCallbackPostProcessing( info, pipe, function( err, pipe ){
+							// invoke the connector's passport processing 
+							connector.passportAuthCallbackPostProcessing(user, 
+																		 pipe, 
+																		 function( err, pipe ){
 								if ( err ){
-									return res.type("html").status(401).send("<html><body>" +
-										"Authentication error: " + err +
-										"</body></html>");
+									return res.type('html').status(401).send('<html><body>' +
+										'Authentication error: ' + err +
+										'</body></html>');
 								}
 								
-								//Save the pipe
+								//Save the [updated] pipe configuration
 								pipesDb.savePipe( pipe, function( err, data ){
+							
 									if ( err ){
+										sdpLog.error('Passport OAuth callback - data pipe configuration ' + pipeId + ' could not be saved: ' + err);
 										return global.jsonError( res, err );
 									}
 									else if (req.query.url) {
@@ -101,23 +124,55 @@ var passportAPI = {
 									else if (req.session.returnUrl) {
 										res.redirect(req.session.returnUrl);
 									}
-								})
+								});
 								
 							}, info);
-						});
+						}); // getPipe
 					}
-				})(req, res, next);
-			}
-		);
+				})(req, res, next); // passport.authenticate
+	},
 
+
+	initEndPoints: function(app) {
+
+		/* 
+		 // only required if a dedicated callback endpoint for passport processing is needed
+		 //callback during passport authentication
+		 app.get('/auth/passport/callback',
+		    	 function(req, res, next) {
+				  authCallback(req, res, next);
+			     }
+		 );
+        */
+ 
 		//initiate passport authentication
 		app.get('/auth/passport/:pipeid',
 			function(req, res, next) {
+
+				sdpLog.info('Starting Passport OAuth authorization process for data pipe ' + req.params.pipeid);
+
 				req.session.pipeId = req.params.pipeid;
-				passport.authenticate(req.params.pipeid, { 
-					state:req.params.pipeid // pass the pipe id as state parameter
-					// duration:'permanent'     // test only
-				})(req, res, next);
+
+				// determine which connector can process this data pipe
+				connectorAPI.getConnectorForPipeId( req.params.pipeid, function (err, connector) {
+
+					if(err) {
+						sdpLog.error('Passport OAuth authentication step 1 - no connector is configured for data pipe ' + req.params.pipeid + '.');
+						return global.jsonError( res, err );
+					}
+
+					// retrieve data source specific OAuth authorization code call parameters from the connector
+					var authorizationOptions = connector.getPassportAuthorizationParams() || {};
+					
+					// add state parm to each authorization request: '{pipe: pipeid}'
+					authorizationOptions.state = JSON.stringify({pipe : req.params.pipeid});
+
+					// start Passport OAuth authentication process
+					passport.authenticate(req.params.pipeid, 
+						                  authorizationOptions)(req, res, next);
+
+				});
+							
 			}
 		);
 		

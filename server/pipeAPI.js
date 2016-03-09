@@ -15,7 +15,6 @@ var pipeRunner = require('./pipeRunner');
 var connectorAPI = require('./connectorAPI');
 var passportAPI = require("./passportAPI");
 var nodeStatic = require('node-static');
-//var sdpLog = require('./logging/sdpLogger.js').getLogger('sdp_common');
 var sdpLog = pipesSDK.logging.getLogger('sdp_common');
 
 module.exports = function( app ){
@@ -351,11 +350,20 @@ module.exports = function( app ){
 	});
 	
 	/**
-	 * authCallback: url for OAuth callback
+	 * Common OAuth authentication processing endpoint.
+	 * @param {Object} req - request, which must contain the following query parameters:
+	 *                       code: OAuth code for data_pipe_id
+	 *                       state: {pipe: data_pipe_id}
+	 * @param {Object} res - response 
 	 */
 	app.get('/authCallback', function( req, res ){
+
+		sdpLog.info('Starting OAuth callback processing.');
+
+		// OAuth code
 		var code = req.query.code || req.query.oauth_verifier;
-		var pipeId = null;
+
+		// state parameter
 		var state = null;
 		
 		if (req.query.state) {
@@ -364,43 +372,67 @@ module.exports = function( app ){
 		else if (req.session && req.session.state) {
 			state = JSON.parse(req.session.state);
 		}
+
+		// The Data Pipe ID should be included in the state parameter
+		var pipeId = null;
 		
 		if (state) {
 			pipeId = state.pipe;
 		}
 		
-		if ( !code || !pipeId ){
-			return global.jsonError( res, 'No code or state specified in OAuth callback request');
+		if ( !pipeId ){
+			sdpLog.error('No data pipe ID was included in OAuth callback parameter state.');
+			return global.jsonError( res, 'No data pipe ID was included in OAuth callback parameter state.');
+		}
+
+		if(! code) {
+			sdpLog.error('No code was found in OAuth callback request.');
+			return global.jsonError( res, 'No code was found in OAuth callback request.');
 		}
 		
+		// fetch data pipe configuration
 		getPipe( pipeId, function( err, pipe ){
 			if ( err ){
-				return global.jsonError( res, err );
+				sdpLog.error('Data pipe configuration for pipe ' + pipeId + ' could not be loaded: ' + err);
+				return global.jsonError( res, 'Data pipe configuration for pipe ' + pipeId + ' could not be loaded: ' + err);
 			}
 			var connector = connectorAPI.getConnector( pipe );
 			if ( !connector ){
-				return global.jsonError( res, 'Unable to find connector for ' + pipeId);
+				sdpLog.error('No suitable connector was found for data pipe ' + pipeId);
+				return global.jsonError( res, 'No suitable connector was found for data pipe ' + pipeId);
 			}
 			
-			connector.authCallback( code, pipeId, function( err, pipe ){
-				if ( err ){
-					return res.type('html').status(401).send('<html><body>' +
-						'Authentication error: ' + err +
-						'</body></html>');
-				}
-				
-				//Save the pipe
-				pipesDb.savePipe( pipe, function( err, data ){
+			var passportStrategy = null;
+			if (typeof connector.getPassportStrategy === "function") {
+				passportStrategy = connector.getPassportStrategy(pipe);
+			}
+			
+			if (passportStrategy) {
+				// let Passport handle OAuth processing
+				passportAPI.authCallback(req, res); 
+			}
+			else {
+				// let connector implementation handle OAuth processing
+				connector.authCallback( code, pipeId, function( err, pipe ){
 					if ( err ){
-						return global.jsonError( res, err );
+						return res.type('html').status(401).send('<html><body>' +
+							'Authentication error: ' + err +
+							'</body></html>');
 					}
+					
+					//Save the data pipe configuration
+					pipesDb.savePipe( pipe, function( err, data ){
+						if ( err ){
+							return global.jsonError( res, err );
+						}
 
-					res.redirect(state.url);
-				});
-				
-			}, state);
-		});
-	});
+						res.redirect(state.url);
+					});
+				}, state);
+			}
+
+		}); // getPipe
+	}); // app.get(/authCallback)
 	
 	//Catch all for uncaught exceptions
 	process.on('uncaughtException', function( err ){

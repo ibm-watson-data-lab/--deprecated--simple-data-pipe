@@ -465,9 +465,10 @@ var mainApp = angular.module('dataMovingApp', [
     return tables;
   }
 
+  // select a data set for processing
   $scope.selectTable = function(table){
-    $scope.selectedPipe.selectedTableName = table.labelPlural || table.name;
-    $scope.selectedPipe.selectedTableId = table.name;
+    $scope.selectedPipe.selectedTableName = table.label || table.labelPlural; // data set display name
+    $scope.selectedPipe.selectedTableId = table.name;                         // data set ID 
   }
 
   $scope.goToNextPage = function( tab ){
