@@ -94,7 +94,7 @@
                         <span ng-show="!activeRun.dbUrl">{{stat.tableLabel || stat.tableName}}</span>
                     </td>
                     <td><span class="piperecord">{{stat.numRecords | number}}</span></td>
-                    <td>{{stat.errors[0].message}}</td>
+                    <td>{{stat.statusMessage || stat.errors[0].message}}</td>
                   </tr>
     		</tbody>
 	   </table>
