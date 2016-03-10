@@ -16,6 +16,7 @@ var connectorAPI = require('./connectorAPI');
 var passportAPI = require("./passportAPI");
 var nodeStatic = require('node-static');
 var sdpLog = pipesSDK.logging.getLogger('sdp_common');
+var util = require('util');
 
 module.exports = function( app ){
 
@@ -382,6 +383,8 @@ module.exports = function( app ){
 		
 		if ( !pipeId ){
 			sdpLog.error('No data pipe ID was included in OAuth callback parameter state.');
+			sdpLog.info('FFDC query: ' + util.inspect(req.query,4));
+			sdpLog.info('FFDC session: ' + util.inspect(req.session,4));
 			return global.jsonError( res, 'No data pipe ID was included in OAuth callback parameter state.');
 		}
 

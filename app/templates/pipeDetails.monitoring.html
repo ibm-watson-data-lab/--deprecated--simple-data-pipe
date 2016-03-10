@@ -88,10 +88,10 @@
     			<th>Status</th>
     		</thead>
     		<tbody>
-    			<tr ng-repeat="stat in activeRun.tableStats | sortBy:'tableLabel'">
+    			<tr ng-repeat="stat in activeRun.tableStats | sortBy:'tableName'">
                     <td>
-                        <a class="type_link" ng-show="activeRun.dbUrl" href="{{activeRun.dbUrl.replace('{dbname}', stat.dbName)}}" target="_blank">{{stat.tableLabel | limitTo:100}}</a>
-                        <span ng-show="!activeRun.dbUrl">{{stat.tableLabel}}</span>
+                        <a class="type_link" ng-show="activeRun.dbUrl" href="{{activeRun.dbUrl.replace('{dbname}', stat.dbName)}}" target="_blank">{{stat.tableLabel || stat.tableName | limitTo:100}}</a>
+                        <span ng-show="!activeRun.dbUrl">{{stat.tableLabel || stat.tableName}}</span>
                     </td>
                     <td><span class="piperecord">{{stat.numRecords | number}}</span></td>
                     <td>{{stat.errors[0].message}}</td>
