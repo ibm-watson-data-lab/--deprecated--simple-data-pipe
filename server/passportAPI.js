@@ -35,10 +35,10 @@ var passportAPI = {
 	  * is performed.
 	  * @param {Object} req - request
 	  * @param {Object} res - response
-	  * @param {Object} next - next handler
+	  * @param {callback}
 	  *
 	  */
-	authCallback: function(req, res, next) {
+	authCallback: function(req, res, callback) {
 
 				sdpLog.info('Starting Passport OAuth callback processing.');
 
@@ -71,7 +71,6 @@ var passportAPI = {
 						// fatal authentication error
 						sdpLog.error('Passport OAuth callback - authentication processing failed: ' + util.inspect(err,4));
 						res.type('html').status(401).send('<html><body> Authentication failed with error ' +  err.statusCode + ' </body></html>');
-						//return next(err);
 					}
 					else if (!user) {
 						// fatal authentication error; no user profile was returned
@@ -105,31 +104,19 @@ var passportAPI = {
 							connector.passportAuthCallbackPostProcessing(user, 
 																		 pipe, 
 																		 function( err, pipe ){
+
 								if ( err ){
 									return res.type('html').status(401).send('<html><body>' +
 										'Authentication error: ' + err +
 										'</body></html>');
 								}
 								
-								//Save the [updated] pipe configuration
-								pipesDb.savePipe( pipe, function( err, data ){
-							
-									if ( err ){
-										sdpLog.error('Passport OAuth callback - data pipe configuration ' + pipeId + ' could not be saved: ' + err);
-										return global.jsonError( res, err );
-									}
-									else if (req.query.url) {
-										res.redirect(req.query.url);
-									}
-									else if (req.session.returnUrl) {
-										res.redirect(req.session.returnUrl);
-									}
-								});
+								callback(null, pipe);
 								
 							}, info);
 						}); // getPipe
 					}
-				})(req, res, next); // passport.authenticate
+				})(req, res); // passport.authenticate				
 	},
 
 
@@ -151,8 +138,7 @@ var passportAPI = {
 
 				sdpLog.info('Starting Passport OAuth authorization process for data pipe ' + req.params.pipeid);
 
-				//req.session.pipeId = req.params.pipeid; // probably not needed
-				req.session.state = JSON.stringify({pipe: req.params.pipeid});
+				req.session.state = JSON.stringify({pipe : req.params.pipeid, url: req.session.state.url});
 
 				// determine which connector can process this data pipe
 				connectorAPI.getConnectorForPipeId( req.params.pipeid, function (err, connector) {
@@ -166,7 +152,7 @@ var passportAPI = {
 					var authorizationOptions = connector.getPassportAuthorizationParams() || {};
 					
 					// add state parm to each authorization request: '{pipe: pipeid}'
-					authorizationOptions.state = JSON.stringify({pipe : req.params.pipeid});
+					authorizationOptions.state = JSON.stringify({pipe : req.params.pipeid, url: req.session.state.url});
 
 					sdpLog.info('Passport authorization options: ' + JSON.stringify(authorizationOptions));
 

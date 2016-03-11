@@ -333,7 +333,9 @@ module.exports = function( app ){
 				passportAPI.addStrategy(pipe._id, passportStrategy);
 				
 				if (req.session) {
-					req.session.returnUrl = req.query.url;
+					req.session.state = {
+						                  url: req.query.url
+						                };
 				}
 				var passportAuthUrl = "/auth/passport/" + pipe._id;
 				res.redirect(passportAuthUrl);
@@ -412,7 +414,22 @@ module.exports = function( app ){
 			
 			if (passportStrategy) {
 				// let Passport handle OAuth processing
-				passportAPI.authCallback(req, res); 
+				passportAPI.authCallback(req, res, function(err, pipe) {
+
+					// TODO err
+
+					//Save the data pipe configuration
+					pipesDb.savePipe( pipe, function( err, data ){
+						if ( err ){
+							return global.jsonError( res, err );
+						}
+
+						// TODO; use same approach as below (URL is set in state Parameter)
+						res.redirect(state.url);
+					});
+
+
+				}); 
 			}
 			else {
 				// let connector implementation handle OAuth processing
