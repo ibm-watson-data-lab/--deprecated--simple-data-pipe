@@ -5,7 +5,7 @@ var passport = require('passport');
 var global = require('bluemix-helper-config').global;
 var pipesSDK = require('simple-data-pipe-sdk');
 var pipesDb = pipesSDK.pipesDb;
-var sdpLog = pipesSDK.logging.getLogger('sdp_common');
+var sdpLog = pipesSDK.logging.getGlobalLogger();
 var connectorAPI = require('./connectorAPI');
 var util = require('util');
 
@@ -41,6 +41,8 @@ var passportAPI = {
 	authCallback: function(req, res, callback) {
 
 				sdpLog.info('Starting Passport OAuth callback processing.');
+
+				var errMsg = '';
 
 				var state = null,
 				    pipeId = null;
@@ -79,7 +81,7 @@ var passportAPI = {
 					}
 					else {
 
-						// create 
+						// attach optionally returned info
 						if (info) {
 							user.info = info;
 						}
@@ -100,20 +102,41 @@ var passportAPI = {
 								return global.jsonError( res, 'Unable to find connector for data pipe ' + pipeId);
 							}
 							
-							// invoke the connector's passport processing 
-							connector.passportAuthCallbackPostProcessing(user, 
-																		 pipe, 
-																		 function( err, pipe ){
+							// protect against certain failures caused by the connector
+							try {
 
-								if ( err ){
-									return res.type('html').status(401).send('<html><body>' +
-										'Authentication error: ' + err +
-										'</body></html>');
+									// invoke the connector's passport authentication post-processing routine
+									connector.passportAuthCallbackPostProcessing(user, 
+																				 pipe, 
+																				 function( err, pipe ){
+
+										// raise an error if neither an error nor an updated data pipe configuration is returned										 		
+										if((! err) && (! pipe)) {
+											errMsg = 'The ' + connector.getId() + ' connector caused a fatal error during OAuth post-processing for data pipe ' + pipeId + ': no results were returned.';
+											sdpLog.error(errMsg);
+											return global.jsonError( res, errMsg);
+										}										 			
+
+										if ( err ){
+											errMsg = 'The ' + connector.getId() + ' connector encountered a fatal error during OAuth post-processing for data pipe ' + pipeId + ': ' + err;
+											sdpLog.error(errMsg);
+											return res.type('html').status(401).send('<html><body>' + errMsg + '</body></html>');
+										}
+										else {
+											sdpLog.info('The ' + connector.getId() + ' connector completed OAuth post-processing for data pipe ' + pipeId);
+											return callback(null, pipe);
+										}
+										
+									}, info);
+
 								}
-								
-								callback(null, pipe);
-								
-							}, info);
+							catch(ex) {
+								errMsg = 'The ' + connector.getId() + ' connector caused a fatal error (' + ex.name + ') during OAuth post-processing for data pipe ' + pipeId + ': ' + ex.message;
+								sdpLog.error('Message: ' + errMsg);
+								sdpLog.error('Call stack: ' + ex.stack);
+								return callback(errMsg, null);	
+							}
+
 						}); // getPipe
 					}
 				})(req, res); // passport.authenticate				
@@ -151,7 +174,7 @@ var passportAPI = {
 					// retrieve data source specific OAuth authorization code call parameters from the connector
 					var authorizationOptions = connector.getPassportAuthorizationParams() || {};
 					
-					// add state parm to each authorization request: '{pipe: pipeid}'
+					// add state parm to each authorization request: '{pipe: pipeid: url: returnUrl}'
 					authorizationOptions.state = JSON.stringify({pipe : req.params.pipeid, url: req.session.state.url});
 
 					sdpLog.info('Passport authorization options: ' + JSON.stringify(authorizationOptions));

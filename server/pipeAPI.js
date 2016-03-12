@@ -13,9 +13,9 @@ var webSocketServer = webSocket.Server;
 var _  = require('lodash');
 var pipeRunner = require('./pipeRunner');
 var connectorAPI = require('./connectorAPI');
-var passportAPI = require("./passportAPI");
+var passportAPI = require('./passportAPI');
 var nodeStatic = require('node-static');
-var sdpLog = pipesSDK.logging.getLogger('sdp_common');
+var sdpLog = pipesSDK.logging.getGlobalLogger();
 var util = require('util');
 
 module.exports = function( app ){
@@ -324,7 +324,7 @@ module.exports = function( app ){
 			}
 			
 			var passportStrategy = null;
-			if (typeof connector.getPassportStrategy === "function") {
+			if (typeof connector.getPassportStrategy === 'function') {
 				passportStrategy = connector.getPassportStrategy(pipe);
 			}
 			
@@ -337,7 +337,7 @@ module.exports = function( app ){
 						                  url: req.query.url
 						                };
 				}
-				var passportAuthUrl = "/auth/passport/" + pipe._id;
+				var passportAuthUrl = '/auth/passport/' + pipe._id;
 				res.redirect(passportAuthUrl);
 			}
 			else {
@@ -408,7 +408,7 @@ module.exports = function( app ){
 			}
 			
 			var passportStrategy = null;
-			if (typeof connector.getPassportStrategy === "function") {
+			if (typeof connector.getPassportStrategy === 'function') {
 				passportStrategy = connector.getPassportStrategy(pipe);
 			}
 			
@@ -416,7 +416,17 @@ module.exports = function( app ){
 				// let Passport handle OAuth processing
 				passportAPI.authCallback(req, res, function(err, pipe) {
 
-					// TODO err
+					if(err) {
+						sdpLog.error('Passport OAuth processing failed: ' + err);
+						return global.jsonError( res, 'Passport OAuth processing failed: ' + err);
+					}
+
+					if(! pipe) {
+						// this indicates a bug in the implementation: passportAPI.authCallback must return a data pipe config
+						// unless an error was returned
+						sdpLog.error('Passport OAuth processing failed: no data pipe configuration was returned');
+						return global.jsonError( res, 'Passport OAuth processing failed: no data pipe configuration was returned');
+					}
 
 					//Save the data pipe configuration
 					pipesDb.savePipe( pipe, function( err, data ){
@@ -424,7 +434,6 @@ module.exports = function( app ){
 							return global.jsonError( res, err );
 						}
 
-						// TODO; use same approach as below (URL is set in state Parameter)
 						res.redirect(state.url);
 					});
 
