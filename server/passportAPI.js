@@ -59,15 +59,18 @@ var passportAPI = {
 				}
 				
 				if ( !pipeId ){
-					sdpLog.error('Passport OAuth callback - data pipe id is missing');
-					return global.jsonError( res, 'Passport OAuth callback - data pipe id is missing.');
+					sdpLog.error('Passport OAuth callback - data pipe configuration id is missing');
+					return global.jsonError( res, 'Passport OAuth callback - data pipe configuration id is missing.');
 				}
 				
 				// delegate OAuth callback processing to passport
 				passport.authenticate(pipeId, { pipeId:pipeId }, function(err, user, info) {
 
-					sdpLog.debug('Passport callback - user: ' + util.inspect(user));
-					sdpLog.debug('Passport callback - info: ' + util.inspect(info));
+					if(user)
+						sdpLog.debug('Passport callback - user: ' + util.inspect(user));
+
+					if(info)
+						sdpLog.debug('Passport callback - info: ' + util.inspect(info));
 
 					if (err) {
 						// fatal authentication error
@@ -98,12 +101,12 @@ var passportAPI = {
 							
 							if ( !connector ){
 								// no connector can process this data pipe configuration
-								sdpLog.error('Passport OAuth callback - no connector is configured for pipe ' + pipeId + '.');
-								return global.jsonError( res, 'Unable to find connector for data pipe ' + pipeId);
+								sdpLog.error('Passport OAuth callback - no connector is available for data pipe configuration  ' + pipeId + '.');
+								return global.jsonError( res, 'Unable to find connector for data pipe configuration  ' + pipeId);
 							}
 							
 							// protect against certain failures caused by the connector
-							try {
+							try {					
 
 									// invoke the connector's passport authentication post-processing routine
 									connector.passportAuthCallbackPostProcessing(user, 
@@ -112,18 +115,18 @@ var passportAPI = {
 
 										// raise an error if neither an error nor an updated data pipe configuration is returned										 		
 										if((! err) && (! pipe)) {
-											errMsg = 'The ' + connector.getId() + ' connector caused a fatal error during OAuth post-processing for data pipe ' + pipeId + ': no results were returned.';
+											errMsg = 'The ' + connector.getId() + ' connector caused a fatal error during OAuth post-processing for data pipe configuration  ' + pipeId + ': no results were returned.';
 											sdpLog.error(errMsg);
 											return global.jsonError( res, errMsg);
 										}										 			
 
 										if ( err ){
-											errMsg = 'The ' + connector.getId() + ' connector encountered a fatal error during OAuth post-processing for data pipe ' + pipeId + ': ' + err;
+											errMsg = 'The ' + connector.getId() + ' connector encountered a fatal error during OAuth post-processing for data pipe configuration  ' + pipeId + ': ' + err;
 											sdpLog.error(errMsg);
 											return res.type('html').status(401).send('<html><body>' + errMsg + '</body></html>');
 										}
 										else {
-											sdpLog.info('The ' + connector.getId() + ' connector completed OAuth post-processing for data pipe ' + pipeId);
+											sdpLog.info('The ' + connector.getId() + ' connector completed OAuth post-processing for data pipe configuration  ' + pipeId);
 											return callback(null, pipe);
 										}
 										
@@ -131,7 +134,7 @@ var passportAPI = {
 
 								}
 							catch(ex) {
-								errMsg = 'The ' + connector.getId() + ' connector caused a fatal error (' + ex.name + ') during OAuth post-processing for data pipe ' + pipeId + ': ' + ex.message;
+								errMsg = 'The ' + connector.getId() + ' connector caused a fatal error (' + ex.name + ') during OAuth post-processing for data pipe configuration  ' + pipeId + ': ' + ex.message;
 								sdpLog.error('Message: ' + errMsg);
 								sdpLog.error('Call stack: ' + ex.stack);
 								return callback(errMsg, null);	
@@ -144,40 +147,33 @@ var passportAPI = {
 
 
 	initEndPoints: function(app) {
-
-		/* 
-		 // only required if a dedicated callback endpoint for passport processing is needed
-		 //callback during passport authentication
-		 app.get('/auth/passport/callback',
-		    	 function(req, res, next) {
-				  authCallback(req, res, next);
-			     }
-		 );
-        */
  
 		//initiate passport authentication
 		app.get('/auth/passport/:pipeid',
 			function(req, res, next) {
 
-				sdpLog.info('Starting Passport OAuth authorization process for data pipe ' + req.params.pipeid);
+				sdpLog.debug('Starting Passport OAuth authorization process for data pipe configuration ' + req.params.pipeid);
 
-				req.session.state = JSON.stringify({pipe : req.params.pipeid, url: req.session.state.url});
+				req.session.state = JSON.stringify({pipe : req.params.pipeid, url: req.query.url});
 
 				// determine which connector can process this data pipe
 				connectorAPI.getConnectorForPipeId( req.params.pipeid, function (err, connector) {
 
 					if(err) {
-						sdpLog.error('Passport OAuth authentication step 1 - no connector is configured for data pipe ' + req.params.pipeid + '.');
+						sdpLog.error('Passport OAuth authentication step 1 - no connector is available  for data pipe configuration  ' + req.params.pipeid + '.');
 						return global.jsonError( res, err );
 					}
 
-					// retrieve data source specific OAuth authorization code call parameters from the connector
-					var authorizationOptions = connector.getPassportAuthorizationParams() || {};
+					var authorizationOptions = {};
+					if (typeof connector.getPassportAuthorizationParams === 'function') { 
+					    // retrieve data source specific OAuth authorization code call parameters from the connector
+						authorizationOptions = connector.getPassportAuthorizationParams();
+					}
 					
 					// add state parm to each authorization request: '{pipe: pipeid: url: returnUrl}'
-					authorizationOptions.state = JSON.stringify({pipe : req.params.pipeid, url: req.session.state.url});
+					authorizationOptions.state = JSON.stringify({pipe : req.params.pipeid, url: req.query.url});
 
-					sdpLog.info('Passport authorization options: ' + JSON.stringify(authorizationOptions));
+					sdpLog.debug('Passport authorization options: ' + JSON.stringify(authorizationOptions));
 
 					// start Passport OAuth authentication process
 					passport.authenticate(req.params.pipeid, 

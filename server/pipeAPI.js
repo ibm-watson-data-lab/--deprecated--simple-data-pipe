@@ -17,6 +17,7 @@ var passportAPI = require('./passportAPI');
 var nodeStatic = require('node-static');
 var sdpLog = pipesSDK.logging.getGlobalLogger();
 var util = require('util');
+var qs = require('querystring');
 
 module.exports = function( app ){
 
@@ -332,12 +333,10 @@ module.exports = function( app ){
 				//use Passport to handle authentication
 				passportAPI.addStrategy(pipe._id, passportStrategy);
 				
-				if (req.session) {
-					req.session.state = {
-						                  url: req.query.url
-						                };
-				}
-				var passportAuthUrl = '/auth/passport/' + pipe._id;
+				var passportAuthUrl = '/auth/passport/' + pipe._id + '?' + qs.stringify({url: req.query.url}); 
+
+				sdpLog.debug('Redirecting OAuth request to ' + passportAuthUrl);
+
 				res.redirect(passportAuthUrl);
 			}
 			else {
