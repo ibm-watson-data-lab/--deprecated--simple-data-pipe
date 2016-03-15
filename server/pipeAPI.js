@@ -353,9 +353,9 @@ module.exports = function( app ){
 	
 	/**
 	 * Common OAuth authentication processing endpoint.
-	 * @param {Object} req - request, which must contain the following query parameters:
-	 *                       code: OAuth code for data_pipe_id
-	 *                       state: {pipe: data_pipe_id}
+	 * @param {Object} req - request, which must contain the following information:
+	 *                       code: OAuth code for data_pipe_config_id
+	 *                       state: {pipe: data_pipe_config_id, url: 'returnURL'}
 	 * @param {Object} res - response 
 	 */
 	app.get('/authCallback', function( req, res ){
@@ -365,7 +365,7 @@ module.exports = function( app ){
 		// OAuth code
 		var code = req.query.code || req.query.oauth_verifier;
 
-		// state parameter
+		// state parameter; should contain {pipe: 'data_pipe_config_id', url: 'returnURL'}
 		var state = null;
 		
 		if (req.query.state) {
@@ -384,8 +384,8 @@ module.exports = function( app ){
 		
 		if ( !pipeId ){
 			sdpLog.error('No data pipe ID was included in OAuth callback parameter state.');
-			sdpLog.info('FFDC query: ' + util.inspect(req.query,4));
-			sdpLog.info('FFDC session: ' + util.inspect(req.session,4));
+			sdpLog.info('FFDC req.query: ' + util.inspect(req.query,3));
+			sdpLog.info('FFDC req.session: ' + util.inspect(req.session,3));
 			return global.jsonError( res, 'No data pipe ID was included in OAuth callback parameter state.');
 		}
 
