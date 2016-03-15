@@ -55,7 +55,7 @@
         <button type="button" class="button_primary" ng-class="{'disabled':connectingpipe || pipeConnectionForm.$invalid}"
             ng-click="connectingpipe = true;savePipe({connect:true})"
             ng-disabled="connectingpipe || pipeConnectionForm.$invalid">{{ connectingpipe ? 'Connecting...' : 'Connect to '+selectedConnector.label }}</button>
-        <p class="type_copy" ng-if="connectingpipe">Redirecting to {{selectedConnector.label}}.com. Please wait...</p>
+        <p class="type_copy" ng-if="connectingpipe">Redirecting to {{selectedConnector.label}}. Please wait...</p>
       </div>
     </form>
     </div>
