@@ -43,7 +43,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(errorHandler({ dumpExceptions:true, showStack:true }));
 
 app.use(expressSession({
-	secret: "simple_data_pipe"
+	secret: "simple_data_pipe",
+	saveUninitialized: true
 }));
 
 var env = app.get('env');
