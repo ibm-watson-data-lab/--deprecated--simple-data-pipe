@@ -4,7 +4,6 @@
   "description": "Tool for loading cloud data (e.g. from salesforce) into Cloudant.",
   "main": "server.js",
   "scripts": {
-    "test": "NODE_CONFIG=tests/config/configYP ./node_modules/.bin/mocha ./tests",
     "postinstall": "node ./node_modules/bower/bin/bower cache clean && node ./node_modules/bower/bin/bower install"
   },
   "repository": {
