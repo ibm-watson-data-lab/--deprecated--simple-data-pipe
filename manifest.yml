@@ -2,10 +2,10 @@
 declared-services:
   sdp-cloudant-service:
     label: cloudantNoSQLDB
-    plan: Shared
+    plan: Lite
   pipes-sso-service:
     label: SingleSignOn
-    plan: standard
+    plan: professional
 applications:
 - name: simple-data-pipe
   memory: 512M
