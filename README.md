@@ -33,11 +33,11 @@ Complete these steps first if you have not already:
 
 Create a Cloudant service within Bluemix if one has not already been created:
 
-    $ cf create-service cloudantNoSQLDB Shared sdp-cloudant-service
+    $ cf create-service cloudantNoSQLDB Lite sdp-cloudant-service
 
 Create a Single Sign On (SSO) service within Bluemix if one has not already been created:
 
-    $ cf create-service SingleSignOn standard pipes-sso-service
+    $ cf create-service SingleSignOn professional pipes-sso-service
 
 ### Deploying
 
