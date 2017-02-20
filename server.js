@@ -17,6 +17,8 @@ var morgan = require('morgan');
 var bluemixHelperConfig = require('bluemix-helper-config');
 var global = bluemixHelperConfig.global;
 var configManager = bluemixHelperConfig.configManager;
+var cfenv = require('cfenv');
+const appEnv = cfenv.getAppEnv();
 
 var sdpLog = require('simple-data-pipe-sdk').logging.getLogger('sdp_common');
 //var sdpLog = require('./server/logging/sdpLogger.js').getLogger('sdp_common');
@@ -58,11 +60,6 @@ if ('development' === env || 'test' === env) {
 }
 
 var port = process.env.VCAP_APP_PORT || configManager.get("DEV_PORT") || 8082;
-if (!process.env.VCAP_APP_HOST){
-	//Running locally. Salesforce requires authCallbacks to use SSL by default
-	global.appHost = "https://127.0.0.1";
-	global.appPort = port;
-}
 
 //Configure security if we are bound to an SSO service
 var ssoService = bluemixHelperConfig.vcapServices.getService( "pipes-sso" );
@@ -108,16 +105,10 @@ var options = {
   cert: fs.readFileSync('development/certs/server/my-server.crt.pem')
 };
 
-var server = null;
-if (process.env.VCAP_APP_HOST){
-	server = require('http').createServer(app);
-	server.listen(port,
-                 process.env.VCAP_APP_HOST,
-                 connected);
-}else{
-	server = require('https').createServer(options, app);
-	server.listen(port,connected);
-}
+var server = require('http').createServer(app);
+server.listen(appEnv.port, ( appEnv.bind == "localhost" ? null : appEnv.bind ), () => {
+      console.log(`listening on ${appEnv.url}`);
+});
 
 if ( wssConfigurator && server ){
 	wssConfigurator( server );
