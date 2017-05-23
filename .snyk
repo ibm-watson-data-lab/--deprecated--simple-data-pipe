@@ -1,0 +1,32 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.7.0
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:ms:20170412':
+    - simple-data-pipe-sdk > bluemix-helper-config > cloudant > debug > ms:
+        patched: '2017-05-23T02:07:11.867Z'
+    - cloudant > debug > ms:
+        patched: '2017-05-23T02:07:11.867Z'
+    - simple-data-pipe-connector-salesforce > simple-data-pipe-sdk > cloudant > debug > ms:
+        patched: '2017-05-23T02:07:11.867Z'
+    - simple-data-pipe-connector-stripe > simple-data-pipe-sdk > cloudant > debug > ms:
+        patched: '2017-05-23T02:07:11.867Z'
+    - bluemix-helper-config > cloudant > debug > ms:
+        patched: '2017-05-23T02:07:11.867Z'
+    - bluemix-helper-sso > bluemix-helper-config > cloudant > debug > ms:
+        patched: '2017-05-23T02:07:11.867Z'
+    - simple-data-pipe-sdk > cloudant > debug > ms:
+        patched: '2017-05-23T02:07:11.867Z'
+    - simple-data-pipe-connector-salesforce > simple-data-pipe-sdk > bluemix-helper-config > cloudant > debug > ms:
+        patched: '2017-05-23T02:07:11.867Z'
+    - simple-data-pipe-connector-stripe > simple-data-pipe-sdk > bluemix-helper-config > cloudant > debug > ms:
+        patched: '2017-05-23T02:07:11.867Z'
+    - simple-data-pipe-connector-salesforce > bluemix-helper-config > cloudant > debug > ms:
+        patched: '2017-05-23T02:07:11.867Z'
+    - simple-data-pipe-connector-stripe > bluemix-helper-config > cloudant > debug > ms:
+        patched: '2017-05-23T02:07:11.867Z'
+    - bluemix-helper-sso > express-session > debug > ms:
+        patched: '2017-05-23T02:07:11.867Z'
+    - morgan > debug > ms:
+        patched: '2017-05-23T02:07:11.867Z'
