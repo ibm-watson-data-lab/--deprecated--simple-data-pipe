@@ -4,8 +4,6 @@
 
 The Simple Data Pipe is an app that loads data from cloud data sources into Cloudant, IBM's managed NoSQL database. Out of the box you can load data from salesforce.com and stripe.com. You can load data from other cloud data sources, such as Reddit using [custom connectors] (https://developer.ibm.com/clouddataservices/simple-data-pipe-connectors/).
 
-![Bluemix Deployments](https://deployment-tracker.mybluemix.net/stats/eff5ff771f3cfd9e9443463c383565a1/badge.svg)
-
 ## Usage
 To use the Simple Data Pipe, grab the code on Github, and then deploy it to IBM Bluemix, where it runs. It lives at a URL in Bluemix, and comes complete with an AngularJS UI for connecting, scheduling, and reporting. 
 
@@ -15,7 +13,7 @@ To follow our full tutorial please visit : https://developer.ibm.com/clouddatase
 
 The fastest way to deploy this application to Bluemix is to click the **Deploy to Bluemix** button below. If you prefer instead to deploy manually to Bluemix then read the entirety of this section.
 
-[![Deploy to Bluemix](https://deployment-tracker.mybluemix.net/stats/eff5ff771f3cfd9e9443463c383565a1/button.svg)](https://bluemix.net/deploy?repository=https://github.com/ibm-cds-labs/simple-data-pipe)
+[![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/ibm-cds-labs/simple-data-pipe)
 
 If you:
 <ul>
@@ -45,34 +43,13 @@ Create a Single Sign On (SSO) service within Bluemix if one has not already been
 
 To deploy manually to Bluemix, simply:
 
-    $ git clone https://github.com/ibm-cds-labs/simple-data-pipe.git
+    $ git clone https://github.com/ibm-watson-data-lab/simple-data-pipe.git
     $ cd simple-data-pipe
     $ cf push
 
  > The Simple Data Pipe comes with a couple of data source connectors pre-installed. You can deploy additional connectors or build your own. [Visit Connector Central](https://developer.ibm.com/clouddataservices/simple-data-pipe-connectors/) to learn more.
 
 **Note:** You may notice that Bluemix assigns a URL to your application containing a random word. This is defined in the `manifest.yml` file where the `random-route` key set to the value of `true`. This ensures that multiple people deploying this application to Bluemix do not run into naming collisions. To specify your own route, remove the `random-route` line from the `manifest.yml` file and add a `host` key with the unique value you would like to use for the host name.
-
-### Privacy Notice
-
-This web application includes code to track deployments to [IBM Bluemix](https://www.bluemix.net/) and other Cloud Foundry platforms. The following information is sent to a [Deployment Tracker](https://github.com/cloudant-labs/deployment-tracker) service on each deployment:
-
-* Application Name (`application_name`)
-* Space ID (`space_id`)
-* Application Version (`application_version`)
-* Application URIs (`application_uris`)
-
-This data is collected from the `VCAP_APPLICATION` environment variable in IBM Bluemix and other Cloud Foundry platforms. This data is used by IBM to track metrics around deployments of sample applications to IBM Bluemix to measure the usefulness of our examples, so that we can continuously improve the content we offer to you. Only deployments of sample applications that include code to ping the Deployment Tracker service will be tracked.
-
-#### Disabling Deployment Tracking
-
-Deployment tracking can be disabled by removing the following line from `server.js`:
-
-```
-require("cf-deployment-tracker-client").track();
-```
-
-Once that line is removed, you may also uninstall the `cf-deployment-tracker-client` npm package.
 
 #### License 
 
