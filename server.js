@@ -113,5 +113,3 @@ server.listen(appEnv.port, ( appEnv.bind == "localhost" ? null : appEnv.bind ), 
 if ( wssConfigurator && server ){
 	wssConfigurator( server );
 }
-
-require("cf-deployment-tracker-client").track();
